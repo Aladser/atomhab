@@ -22,7 +22,7 @@ class DatePeriod(models.Model):
 class Place(TruncateTableMixin, models.Model):
     """Место"""
 
-    address = models.CharField(verbose_name="Адрес", max_length=255)
+    name = models.CharField(verbose_name="Название", max_length=255)
     description = models.TextField(verbose_name="Комментарии", **NULLABLE)
 
     class Meta:
@@ -31,7 +31,7 @@ class Place(TruncateTableMixin, models.Model):
         ordering = ("pk",)
 
     def __str__(self):
-        return self.address
+        return self.name
 
 
 class Action(TruncateTableMixin, models.Model):
@@ -67,16 +67,42 @@ class Reward(TruncateTableMixin, models.Model):
 class Habit(TruncateTableMixin, models.Model):
     """Привычка"""
 
-    user = models.ForeignKey(to=User, verbose_name="Создатель", on_delete=models.CASCADE, related_name='habits')
-    place = models.ForeignKey(to=Place, verbose_name="Место", on_delete=models.CASCADE, **NULLABLE, related_name='habits')
-    datetime = models.DateTimeField(verbose_name="Время", auto_now=True)
-    action = models.ForeignKey(to=Action, verbose_name="Действие", on_delete=models.CASCADE, related_name='habits')
+    user = models.ForeignKey(
+        to=User,
+        verbose_name="Создатель",
+        on_delete=models.CASCADE,
+        related_name='habits'
+    )
+    place = models.ForeignKey(
+        to=Place,
+        verbose_name="Место",
+        on_delete=models.CASCADE,
+        related_name='habits',
+    )
+    datetime = models.DateTimeField(verbose_name="Время",auto_now=True)
+    action = models.ForeignKey(
+        to=Action,
+        verbose_name="Действие",
+        on_delete=models.CASCADE,
+        related_name='habits'
+    )
 
-    is_pleasant = models.BooleanField(verbose_name="Признак приятной привычки", default=False)
-    interval = models.ForeignKey(to=DatePeriod, verbose_name="Периодичность", on_delete=models.CASCADE, related_name='habits')
-    reward = models.ForeignKey(to=Reward, verbose_name="Вознаграждение", on_delete=models.CASCADE, related_name='habits')
-    execution_time = models.PositiveIntegerField(verbose_name="Время выполнения, в секундах", default=120)
-    is_published = models.BooleanField("Признак публикации", default=False)
+    is_pleasant = models.BooleanField(verbose_name="Признак приятной привычки",default=False)
+    interval = models.ForeignKey(
+        to=DatePeriod,
+        verbose_name="Периодичность",
+        on_delete=models.CASCADE,
+        related_name='habits'
+    )
+    reward = models.ForeignKey(
+        to=Reward,
+        verbose_name="Вознаграждение",
+        on_delete=models.CASCADE,
+        related_name='habits',
+        **NULLABLE
+    )
+    execution_time = models.PositiveIntegerField(verbose_name="Время выполнения, в секундах",default=120)
+    is_published = models.BooleanField(verbose_name="Признак публикации",default=False)
 
     class Meta:
         verbose_name = "Привычка"
@@ -90,7 +116,12 @@ class Habit(TruncateTableMixin, models.Model):
 class RelatedHabit(TruncateTableMixin, models.Model):
     """Связанная привычка"""
 
-    related_link = models.ForeignKey(Habit, verbose_name="привычка", on_delete=models.CASCADE, related_name='related_habits')
+    related_link = models.ForeignKey(
+        to=Habit,
+        verbose_name="привычка",
+        on_delete=models.CASCADE,
+        related_name='related_habits'
+    )
 
     class Meta:
         verbose_name = "Связанная привычка"
