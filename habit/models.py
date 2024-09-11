@@ -22,7 +22,7 @@ class DatePeriod(models.Model):
 class Place(TruncateTableMixin, models.Model):
     """Место"""
 
-    address = models.CharField(verbose_name="Адрес", max_length=255)
+    name = models.CharField(verbose_name="Название", max_length=255)
     description = models.TextField(verbose_name="Комментарии", **NULLABLE)
 
     class Meta:
@@ -31,7 +31,7 @@ class Place(TruncateTableMixin, models.Model):
         ordering = ("pk",)
 
     def __str__(self):
-        return self.address
+        return self.name
 
 
 class Action(TruncateTableMixin, models.Model):
@@ -78,7 +78,6 @@ class Habit(TruncateTableMixin, models.Model):
         verbose_name="Место",
         on_delete=models.CASCADE,
         related_name='habits',
-        **NULLABLE
     )
     datetime = models.DateTimeField(verbose_name="Время",auto_now=True)
     action = models.ForeignKey(
@@ -99,7 +98,8 @@ class Habit(TruncateTableMixin, models.Model):
         to=Reward,
         verbose_name="Вознаграждение",
         on_delete=models.CASCADE,
-        related_name='habits'
+        related_name='habits',
+        **NULLABLE
     )
     execution_time = models.PositiveIntegerField(verbose_name="Время выполнения, в секундах",default=120)
     is_published = models.BooleanField(verbose_name="Признак публикации",default=False)

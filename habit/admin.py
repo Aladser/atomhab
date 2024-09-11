@@ -10,17 +10,17 @@ class DatePeriodAdmin(admin.ModelAdmin):
 
 @admin.register(Place)
 class PlaceAdmin(admin.ModelAdmin):
-    list_display = ('address', 'description')
-    search_fields = ('address',)
+    list_display = ('name',)
+    search_fields = ('name',)
 
 @admin.register(Action)
 class ActionAdmin(admin.ModelAdmin):
-    list_display = ('name', 'description')
+    list_display = ('name',)
     search_fields = ('name',)
 
 @admin.register(Reward)
 class RewardAdmin(admin.ModelAdmin):
-    list_display = ('name', 'description')
+    list_display = ('name',)
     search_fields = ('name',)
 
 @admin.register(Habit)
