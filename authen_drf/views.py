@@ -23,6 +23,7 @@ class UserRetrieveAPIView(generics.RetrieveAPIView):
         user_obj_pk = self.request.__dict__['parser_context']['kwargs']['pk']
         return UserDetailSerializer if user_obj_pk == self.request.user.pk else UserListSerializer
 
+
 # CREATE
 class UserCreateAPIView(generics.CreateAPIView):
     serializer_class = UserDetailSerializer
@@ -34,6 +35,7 @@ class UserCreateAPIView(generics.CreateAPIView):
         user.set_password(user.password)
         user.save()
 
+
 # UPDATE
 class UserUpdateAPIView(generics.UpdateAPIView):
     serializer_class = UserDetailSerializer
@@ -44,6 +46,7 @@ class UserUpdateAPIView(generics.UpdateAPIView):
 class UserDestroyAPIView(generics.DestroyAPIView):
     serializer_class = UserDetailSerializer
     queryset = User.objects.all()
+
 
 # АВТОРИЗАЦИЯ
 class LoginView(TokenObtainPairView):

@@ -24,6 +24,7 @@ INSTALLED_APPS = [
     'django_celery_beat',
 
     'authen_drf',
+    'habit',
 ]
 
 MIDDLEWARE = [
