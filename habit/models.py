@@ -95,7 +95,7 @@ class Habit(TruncateTableMixin, models.Model):
         verbose_name = "Привычка"
         verbose_name_plural = "Привычки"
         unique_together = ('location', 'action', 'time', 'periodicity', 'execution_time', 'is_publiс')
-        ordering = ("-pk",)
+        ordering = ("pk",)
 
     def __str__(self):
         return f"{self.action} в {self.time} в {self.location}"
@@ -114,9 +114,10 @@ class PleasantHabit(TruncateTableMixin, models.Model):
     class Meta:
         verbose_name = "Приятная привычка"
         verbose_name_plural = "Приятные привычки"
+        ordering = ("pk",)
 
     def __str__(self):
-        return self.habit.name
+        return str(self.habit)
 
 # ПОЛЕЗНАЯ ПРИВЫЧКА
 class UsefulHabit(TruncateTableMixin, models.Model):

@@ -20,8 +20,6 @@ action_param_obj_list = [
     {'name': 'петь'},
     {'name': 'играть'},
     {'name': 'танцевать'},
-    {'name': 'убираться'},
-    {'name': 'кормить кота'},
 ]
 
 reward_param_obj_list = [
@@ -75,4 +73,9 @@ class Command(BaseCommand):
         ]
         Seeding.seed_table(Habit, habit_param_obj_list)
 
-
+        pleasant_habits_obj_list = [
+            {'habit': get_object_or_404(Habit, pk=1)},
+            {'habit': get_object_or_404(Habit, pk=2)},
+            {'habit': get_object_or_404(Habit, pk=3)}
+        ]
+        Seeding.seed_table(PleasantHabit, pleasant_habits_obj_list)
