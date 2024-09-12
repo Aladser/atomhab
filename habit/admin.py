@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from habit.models import DatePeriod, Place, Action, Reward, Habit
+from habit.models import DatePeriod, Location, Action, Reward, Habit
 
 
 @admin.register(DatePeriod)
@@ -8,8 +8,8 @@ class DatePeriodAdmin(admin.ModelAdmin):
     list_display = ('name', 'interval')
     search_fields = ('name',)
 
-@admin.register(Place)
-class PlaceAdmin(admin.ModelAdmin):
+@admin.register(Location)
+class LocationAdmin(admin.ModelAdmin):
     list_display = ('name',)
     search_fields = ('name',)
 

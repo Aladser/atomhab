@@ -5,7 +5,7 @@ from authen_drf.management.commands.createusers import user_1_email, user_2_emai
 from habit.models import *
 from libs.seeding import Seeding
 
-place_param_obj_list = [
+location_param_obj_list = [
     {'name': 'Дом'},
     {'name': 'Работа'},
     {'name': 'Двор'},
@@ -22,7 +22,6 @@ action_param_obj_list = [
     {'name': 'танцевать'},
     {'name': 'убираться'},
     {'name': 'кормить кота'},
-    {'name': 'убираться'},
 ]
 
 reward_param_obj_list = [
@@ -45,7 +44,7 @@ dateperiod_param_obj_list = [
 class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         Seeding.seed_table(DatePeriod, dateperiod_param_obj_list)
-        Seeding.seed_table(Place, place_param_obj_list)
+        Seeding.seed_table(Location, location_param_obj_list)
         Seeding.seed_table(Action, action_param_obj_list)
         Seeding.seed_table(Reward, reward_param_obj_list)
 
@@ -53,9 +52,9 @@ class Command(BaseCommand):
         user_2 = get_object_or_404(User, email=user_2_email)
         user_3 = get_object_or_404(User, email=user_3_email)
 
-        place_1 =get_object_or_404(Place, name=place_param_obj_list[0]['name'])
-        place_2 =get_object_or_404(Place, name=place_param_obj_list[1]['name'])
-        place_3 =get_object_or_404(Place, name=place_param_obj_list[2]['name'])
+        place_1 =get_object_or_404(Location, name=location_param_obj_list[0]['name'])
+        place_2 =get_object_or_404(Location, name=location_param_obj_list[1]['name'])
+        place_3 =get_object_or_404(Location, name=location_param_obj_list[2]['name'])
 
         action_1 =get_object_or_404(Action, name=action_param_obj_list[0]['name'])
         action_2 =get_object_or_404(Action, name=action_param_obj_list[1]['name'])
