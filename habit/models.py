@@ -4,6 +4,7 @@ from authen_drf.models import User
 from config.settings import NULLABLE
 from libs.truncate_table_mixin import TruncateTableMixin
 
+
 class DatePeriod(models.Model):
     """Временной интервал"""
 
@@ -65,69 +66,94 @@ class Reward(TruncateTableMixin, models.Model):
 
 
 class Habit(TruncateTableMixin, models.Model):
-    """Привычка"""
+    """Привычка. Ее можно сделать и полезной, и приятной"""
 
-    user = models.ForeignKey(
-        to=User,
-        verbose_name="Создатель",
-        on_delete=models.CASCADE,
-        related_name='habits'
-    )
-    place = models.ForeignKey(
+    location = models.ForeignKey(
         to=Place,
         verbose_name="Место",
         on_delete=models.CASCADE,
         related_name='habits',
     )
-    datetime = models.DateTimeField(verbose_name="Время",auto_now=True)
     action = models.ForeignKey(
         to=Action,
         verbose_name="Действие",
         on_delete=models.CASCADE,
         related_name='habits'
     )
+    time = models.TimeField(verbose_name="Время",auto_now=True)
 
-    is_pleasant = models.BooleanField(verbose_name="Признак приятной привычки",default=False)
-    interval = models.ForeignKey(
+    periodicity = models.ForeignKey(
         to=DatePeriod,
         verbose_name="Периодичность",
         on_delete=models.CASCADE,
         related_name='habits'
     )
-    reward = models.ForeignKey(
-        to=Reward,
-        verbose_name="Вознаграждение",
-        on_delete=models.CASCADE,
-        related_name='habits',
-        **NULLABLE
-    )
     execution_time = models.PositiveIntegerField(verbose_name="Время выполнения, в секундах",default=120)
-    is_published = models.BooleanField(verbose_name="Признак публикации",default=False)
+    is_publiс = models.BooleanField(verbose_name="Общедоступный",default=False)
 
     class Meta:
         verbose_name = "Привычка"
         verbose_name_plural = "Привычки"
+        unique_together = ('location', 'action', 'time')
         ordering = ("-pk",)
 
     def __str__(self):
-        return f"Пользователь {self.user} будет {self.action} в {self.datetime} в {self.place}"
+        return f"{self.action} в {self.time} в {self.location}"
 
 
-class RelatedHabit(TruncateTableMixin, models.Model):
-    """Связанная привычка"""
+class UsefulHabit(TruncateTableMixin, models.Model):
+    """Полезная привычка"""
 
-    related_link = models.ForeignKey(
+    pleasant_habit = models.ForeignKey(
         to=Habit,
-        verbose_name="привычка",
+        verbose_name="Приятная привычка",
         on_delete=models.CASCADE,
-        related_name='related_habits'
+        related_name='useful_habits',
+        default=None,
+        **NULLABLE,
+    )
+    reward = models.ForeignKey(
+        to=Reward,
+        verbose_name="Вознаграждение",
+        on_delete=models.CASCADE,
+        related_name='useful_habits',
+        default=None,
+        **NULLABLE
     )
 
-    class Meta:
-        verbose_name = "Связанная привычка"
-        verbose_name_plural = "Связанные привычки"
-        ordering = ("-pk",)
+class UserUsefulHabit(TruncateTableMixin, models.Model):
+    """Пользовательская полезная привычка"""
 
-    def __str__(self):
-        return f"{self.pk} - {self.related_link}"
+    user = models.ForeignKey(
+        to=User,
+        verbose_name="Пользователь",
+        on_delete=models.CASCADE,
+        related_name='userful_habits',
+        **NULLABLE
+    )
+    habit = models.ForeignKey(
+        to=UsefulHabit,
+        verbose_name="Полезная привычка",
+        on_delete=models.CASCADE,
+        related_name='userful_habits',
+        **NULLABLE
+    )
+
+class UserPleasantHabit(TruncateTableMixin, models.Model):
+    """Пользовательская приятная привычка"""
+
+    user = models.ForeignKey(
+        to=User,
+        verbose_name="Пользователь",
+        on_delete=models.CASCADE,
+        related_name='user_pleasant_habits',
+        **NULLABLE
+    )
+    habit = models.ForeignKey(
+        to=Habit,
+        verbose_name="Приятная привычка",
+        on_delete=models.CASCADE,
+        related_name='user_pleasant_habits',
+        **NULLABLE
+    )
 

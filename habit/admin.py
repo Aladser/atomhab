@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from habit.models import DatePeriod, Place, Action, Reward, Habit, RelatedHabit
+from habit.models import DatePeriod, Place, Action, Reward, Habit
 
 
 @admin.register(DatePeriod)
@@ -18,17 +18,8 @@ class ActionAdmin(admin.ModelAdmin):
     list_display = ('name',)
     search_fields = ('name',)
 
-@admin.register(Reward)
-class RewardAdmin(admin.ModelAdmin):
-    list_display = ('name',)
-    search_fields = ('name',)
-
 @admin.register(Habit)
 class HabitAdmin(admin.ModelAdmin):
-    list_display = ('user', 'place', 'datetime', 'action', 'is_pleasant', 'interval', 'reward', 'execution_time', 'is_published')
-    search_fields = ('name',)
+    list_display = ('location', 'action', 'time', 'periodicity', 'execution_time', 'is_publiс')
 
-@admin.register(RelatedHabit)
-class RelatedHabitAdmin(admin.ModelAdmin):
-    list_display = ('pk', 'related_link')
-    search_fields = ('pk',)
+
