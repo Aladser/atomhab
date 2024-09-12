@@ -48,10 +48,6 @@ class Command(BaseCommand):
         Seeding.seed_table(Action, action_param_obj_list)
         Seeding.seed_table(Reward, reward_param_obj_list)
 
-        user_1 = get_object_or_404(User, email=user_1_email)
-        user_2 = get_object_or_404(User, email=user_2_email)
-        user_3 = get_object_or_404(User, email=user_3_email)
-
         place_1 =get_object_or_404(Location, name=location_param_obj_list[0]['name'])
         place_2 =get_object_or_404(Location, name=location_param_obj_list[1]['name'])
         place_3 =get_object_or_404(Location, name=location_param_obj_list[2]['name'])
@@ -63,9 +59,6 @@ class Command(BaseCommand):
         useful_action_2 =get_object_or_404(Action, name=action_param_obj_list[4]['name'])
         useful_action_3 =get_object_or_404(Action, name=action_param_obj_list[5]['name'])
 
-        reward_1 =get_object_or_404(Reward, name=reward_param_obj_list[0]['name'])
-        reward_2 =get_object_or_404(Reward, name=reward_param_obj_list[1]['name'])
-        reward_3 =get_object_or_404(Reward, name=reward_param_obj_list[2]['name'])
 
         hour_period = get_object_or_404(DatePeriod, name=dateperiod_param_obj_list[0]['name'])
         day_period = get_object_or_404(DatePeriod, name=dateperiod_param_obj_list[3]['name'])
@@ -87,6 +80,7 @@ class Command(BaseCommand):
             {'habit': get_object_or_404(Habit, pk=3)}
         ]
         Seeding.seed_table(PleasantHabit, pleasant_habits_param_obj_list)
+        reward =get_object_or_404(Reward, name=reward_param_obj_list[0]['name'])
 
         useful_habits_param_obj_list = [
             {'habit': get_object_or_404(Habit, pk=4)},
@@ -94,3 +88,7 @@ class Command(BaseCommand):
             {'habit': get_object_or_404(Habit, pk=6)}
         ]
         Seeding.seed_table(UsefulHabit, useful_habits_param_obj_list)
+
+        user_1 = get_object_or_404(User, email=user_1_email)
+        user_2 = get_object_or_404(User, email=user_2_email)
+        user_3 = get_object_or_404(User, email=user_3_email)
