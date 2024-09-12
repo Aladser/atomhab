@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from habit.models import DatePeriod, Location, Action, Reward, Habit, PleasantHabit, UsefulHabit
+from habit.models import DatePeriod, Location, Action, Reward, Habit, PleasantHabit, UsefulHabit, UserUsefulHabit
 
 
 @admin.register(DatePeriod)
@@ -30,3 +30,6 @@ class PleasantHabit(admin.ModelAdmin):
 class UsefulHabit(admin.ModelAdmin):
     list_display = ('pk', 'habit', 'pleasant_habit', 'reward')
 
+@admin.register(UserUsefulHabit)
+class UserUsefulHabit(admin.ModelAdmin):
+    list_display = ('pk', 'user', 'useful_habit')

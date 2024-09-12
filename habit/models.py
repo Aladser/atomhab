@@ -1,5 +1,6 @@
 from django.db import models
 
+from authen_drf.models import User
 from config.settings import NULLABLE
 from libs.truncate_table_mixin import TruncateTableMixin
 
@@ -155,3 +156,29 @@ class UsefulHabit(TruncateTableMixin, models.Model):
             return f"{str(self.habit)} (награда - {self.reward})"
         else:
             return f"{str(self.habit)} (награда - {self.pleasant_habit.name})"
+
+# ПОЛЬЗОВАТЕЛЬСКАЯ ПОЛЕЗНАЯ ПРИВЫЧКА
+class UserUsefulHabit(TruncateTableMixin, models.Model):
+    """Пользовательская приятная привычка"""
+
+    user = models.ForeignKey(
+        to=User,
+        verbose_name="Пользователь",
+        on_delete=models.CASCADE,
+        related_name='user_useful_habits',
+    )
+
+    useful_habit = models.ForeignKey(
+        to=UsefulHabit,
+        verbose_name="Полезная привычка",
+        on_delete=models.CASCADE,
+        related_name='user_useful_habits',
+    )
+
+    class Meta:
+        verbose_name = "Пользовательская приятная привычка"
+        verbose_name_plural = "Пользовательская приятные привычки"
+        ordering = ("pk",)
+
+    def __str__(self):
+        return str(self.habit)
