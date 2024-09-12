@@ -20,7 +20,7 @@ class ActionAdmin(admin.ModelAdmin):
 
 @admin.register(Habit)
 class HabitAdmin(admin.ModelAdmin):
-    list_display = ('pk', 'location', 'action', 'time', 'periodicity', 'execution_time', 'is_publiс')
+    list_display = ('pk', 'author', 'location', 'action', 'time', 'periodicity', 'execution_time', 'is_publiс')
 
 @admin.register(PleasantHabit)
 class PleasantHabit(admin.ModelAdmin):

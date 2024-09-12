@@ -69,6 +69,12 @@ class Reward(TruncateTableMixin, models.Model):
 class Habit(TruncateTableMixin, models.Model):
     """ Привычка. Ее можно сделать и полезной, и приятной """
 
+    author = models.ForeignKey(
+        to=User,
+        verbose_name="Автор",
+        on_delete=models.CASCADE,
+        related_name='habits',
+    )
     location = models.ForeignKey(
         to=Location,
         verbose_name="Место",

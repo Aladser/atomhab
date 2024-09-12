@@ -59,18 +59,23 @@ class Command(BaseCommand):
         useful_action_2 =get_object_or_404(Action, name=action_param_obj_list[4]['name'])
         useful_action_3 =get_object_or_404(Action, name=action_param_obj_list[5]['name'])
 
-
         hour_period = get_object_or_404(DatePeriod, name=dateperiod_param_obj_list[0]['name'])
         day_period = get_object_or_404(DatePeriod, name=dateperiod_param_obj_list[3]['name'])
         week_period = get_object_or_404(DatePeriod, name=dateperiod_param_obj_list[5]['name'])
 
+        userlist = [
+            get_object_or_404(User, email=user_1_email),
+            get_object_or_404(User, email=user_2_email),
+            get_object_or_404(User, email=user_3_email)
+        ]
+
         habit_param_obj_list = [
-            {'location': place_1, 'action': pleasant_action_1, 'periodicity': hour_period},
-            {'location': place_2, 'action': pleasant_action_2, 'periodicity': day_period},
-            {'location': place_3, 'action': pleasant_action_3, 'periodicity': week_period},
-            {'location':place_1, 'action': useful_action_1, 'periodicity': hour_period},
-            {'location': place_2, 'action': useful_action_2, 'periodicity': day_period},
-            {'location': place_3, 'action': useful_action_3, 'periodicity': week_period},
+            {'location': place_1, 'action': pleasant_action_1, 'periodicity': hour_period, 'author':userlist[0]},
+            {'location': place_2, 'action': pleasant_action_2, 'periodicity': day_period, 'author':userlist[1]},
+            {'location': place_3, 'action': pleasant_action_3, 'periodicity': week_period, 'author':userlist[2]},
+            {'location':place_1, 'action': useful_action_1, 'periodicity': hour_period, 'author':userlist[0]},
+            {'location': place_2, 'action': useful_action_2, 'periodicity': day_period, 'author':userlist[1]},
+            {'location': place_3, 'action': useful_action_3, 'periodicity': week_period, 'author':userlist[2]},
         ]
         Seeding.seed_table(Habit, habit_param_obj_list)
 
@@ -88,7 +93,3 @@ class Command(BaseCommand):
             {'habit': get_object_or_404(Habit, pk=6)}
         ]
         Seeding.seed_table(UsefulHabit, useful_habits_param_obj_list)
-
-        user_1 = get_object_or_404(User, email=user_1_email)
-        user_2 = get_object_or_404(User, email=user_2_email)
-        user_3 = get_object_or_404(User, email=user_3_email)
