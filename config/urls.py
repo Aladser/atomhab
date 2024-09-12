@@ -7,4 +7,5 @@ from config.settings import MEDIA_ROOT, MEDIA_URL
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('user/', include('authen_drf.urls', namespace='user')),
+    path('', include('habit.urls')),
 ] + static(MEDIA_URL, document_root=MEDIA_ROOT)
