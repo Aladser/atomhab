@@ -40,12 +40,13 @@ class Action(TruncateTableMixin, models.Model):
     """Действие"""
 
     name = models.CharField(verbose_name="Название", max_length=100, unique=True)
+    is_pleasant = models.BooleanField(verbose_name="приятное", default=False)
     description = models.TextField(verbose_name="Объяснение", **NULLABLE)
 
     class Meta:
         verbose_name = "Действие"
         verbose_name_plural = "Действия"
-        ordering = ("name",)
+        ordering = ("pk",)
 
     def __str__(self):
         return self.name

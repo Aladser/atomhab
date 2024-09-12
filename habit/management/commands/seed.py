@@ -16,9 +16,9 @@ location_param_obj_list = [
 ]
 
 action_param_obj_list = [
-    {'name': 'петь'},
-    {'name': 'играть'},
-    {'name': 'танцевать'},
+    {'name': 'петь', 'is_pleasant':True},
+    {'name': 'играть', 'is_pleasant':True},
+    {'name': 'танцевать', 'is_pleasant':True},
     {'name': 'бегать'},
     {'name': 'учиться'},
     {'name': 'отжиматься'},

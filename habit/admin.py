@@ -15,7 +15,7 @@ class LocationAdmin(admin.ModelAdmin):
 
 @admin.register(Action)
 class ActionAdmin(admin.ModelAdmin):
-    list_display = ('name',)
+    list_display = ('name', 'is_pleasant')
     search_fields = ('name',)
 
 @admin.register(Habit)
