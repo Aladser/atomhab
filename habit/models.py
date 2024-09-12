@@ -1,8 +1,8 @@
 from django.db import models
 
-from authen_drf.models import User
 from config.settings import NULLABLE
 from libs.truncate_table_mixin import TruncateTableMixin
+
 
 # ВРЕМЕННОЙ ИНТЕРВАЛ
 class DatePeriod(models.Model):
@@ -29,7 +29,7 @@ class Location(TruncateTableMixin, models.Model):
     class Meta:
         verbose_name = "Место"
         verbose_name_plural = "Места"
-        ordering = ("pk",)
+        ordering = ("name",)
 
     def __str__(self):
         return self.name
@@ -134,21 +134,24 @@ class UsefulHabit(TruncateTableMixin, models.Model):
         verbose_name="Приятная привычка",
         on_delete=models.CASCADE,
         related_name='userful_habits',
+        **NULLABLE,
     )
     reward = models.ForeignKey(
         to=Reward,
         verbose_name="Вознаграждение",
         on_delete=models.CASCADE,
         related_name='userful_habits',
+        **NULLABLE,
     )
 
     class Meta:
         verbose_name = "Полезная привычка"
         verbose_name_plural = "Полезные привычки"
         unique_together = ('habit','pleasant_habit', 'reward')
+        ordering = ("pk",)
 
     def __str__(self):
         if self.pleasant_habit is None:
-            return f"{self.habit.name} (награда - {self.reward})"
+            return f"{str(self.habit)} (награда - {self.reward})"
         else:
-            return f"{self.habit.name} (награда - {self.pleasant_habit.name})"
+            return f"{str(self.habit)} (награда - {self.pleasant_habit.name})"

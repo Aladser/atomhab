@@ -2,6 +2,7 @@ from django.core.management import BaseCommand
 from django.shortcuts import get_object_or_404
 
 from authen_drf.management.commands.createusers import user_1_email, user_2_email, user_3_email
+from authen_drf.models import User
 from habit.models import *
 from libs.seeding import Seeding
 
@@ -11,15 +12,16 @@ location_param_obj_list = [
     {'name': 'Двор'},
     {'name': 'Набережная'},
     {'name': 'Парк'},
+    {'name': 'Озеро'},
 ]
 
 action_param_obj_list = [
-    {'name': 'бегать'},
-    {'name': 'учиться'},
-    {'name': 'отжиматься'},
     {'name': 'петь'},
     {'name': 'играть'},
     {'name': 'танцевать'},
+    {'name': 'бегать'},
+    {'name': 'учиться'},
+    {'name': 'отжиматься'},
 ]
 
 reward_param_obj_list = [
@@ -54,9 +56,12 @@ class Command(BaseCommand):
         place_2 =get_object_or_404(Location, name=location_param_obj_list[1]['name'])
         place_3 =get_object_or_404(Location, name=location_param_obj_list[2]['name'])
 
-        action_1 =get_object_or_404(Action, name=action_param_obj_list[0]['name'])
-        action_2 =get_object_or_404(Action, name=action_param_obj_list[1]['name'])
-        action_3 =get_object_or_404(Action, name=action_param_obj_list[2]['name'])
+        pleasant_action_1 =get_object_or_404(Action, name=action_param_obj_list[0]['name'])
+        pleasant_action_2 =get_object_or_404(Action, name=action_param_obj_list[1]['name'])
+        pleasant_action_3 =get_object_or_404(Action, name=action_param_obj_list[2]['name'])
+        useful_action_1 =get_object_or_404(Action, name=action_param_obj_list[3]['name'])
+        useful_action_2 =get_object_or_404(Action, name=action_param_obj_list[4]['name'])
+        useful_action_3 =get_object_or_404(Action, name=action_param_obj_list[5]['name'])
 
         reward_1 =get_object_or_404(Reward, name=reward_param_obj_list[0]['name'])
         reward_2 =get_object_or_404(Reward, name=reward_param_obj_list[1]['name'])
@@ -67,15 +72,25 @@ class Command(BaseCommand):
         week_period = get_object_or_404(DatePeriod, name=dateperiod_param_obj_list[5]['name'])
 
         habit_param_obj_list = [
-            {'location':place_1, 'action':action_1, 'periodicity': hour_period},
-            {'location': place_2, 'action': action_2, 'periodicity': day_period},
-            {'location': place_3, 'action': action_3, 'periodicity': week_period},
+            {'location': place_1, 'action': pleasant_action_1, 'periodicity': hour_period},
+            {'location': place_2, 'action': pleasant_action_2, 'periodicity': day_period},
+            {'location': place_3, 'action': pleasant_action_3, 'periodicity': week_period},
+            {'location':place_1, 'action': useful_action_1, 'periodicity': hour_period},
+            {'location': place_2, 'action': useful_action_2, 'periodicity': day_period},
+            {'location': place_3, 'action': useful_action_3, 'periodicity': week_period},
         ]
         Seeding.seed_table(Habit, habit_param_obj_list)
 
-        pleasant_habits_obj_list = [
+        pleasant_habits_param_obj_list = [
             {'habit': get_object_or_404(Habit, pk=1)},
             {'habit': get_object_or_404(Habit, pk=2)},
             {'habit': get_object_or_404(Habit, pk=3)}
         ]
-        Seeding.seed_table(PleasantHabit, pleasant_habits_obj_list)
+        Seeding.seed_table(PleasantHabit, pleasant_habits_param_obj_list)
+
+        useful_habits_param_obj_list = [
+            {'habit': get_object_or_404(Habit, pk=4)},
+            {'habit': get_object_or_404(Habit, pk=5)},
+            {'habit': get_object_or_404(Habit, pk=6)}
+        ]
+        Seeding.seed_table(UsefulHabit, useful_habits_param_obj_list)
