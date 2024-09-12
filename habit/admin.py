@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from habit.models import DatePeriod, Place, Action, Reward, Habit, RelatedHabit
+from habit.models import DatePeriod, Location, Action, Reward, Habit, PleasantHabit, UsefulHabit, UserUsefulHabit
 
 
 @admin.register(DatePeriod)
@@ -8,27 +8,28 @@ class DatePeriodAdmin(admin.ModelAdmin):
     list_display = ('name', 'interval')
     search_fields = ('name',)
 
-@admin.register(Place)
-class PlaceAdmin(admin.ModelAdmin):
+@admin.register(Location)
+class LocationAdmin(admin.ModelAdmin):
     list_display = ('name',)
     search_fields = ('name',)
 
 @admin.register(Action)
 class ActionAdmin(admin.ModelAdmin):
-    list_display = ('name',)
-    search_fields = ('name',)
-
-@admin.register(Reward)
-class RewardAdmin(admin.ModelAdmin):
-    list_display = ('name',)
+    list_display = ('name', 'is_pleasant')
     search_fields = ('name',)
 
 @admin.register(Habit)
 class HabitAdmin(admin.ModelAdmin):
-    list_display = ('user', 'place', 'datetime', 'action', 'is_pleasant', 'interval', 'reward', 'execution_time', 'is_published')
-    search_fields = ('name',)
+    list_display = ('pk', 'author', 'location', 'action', 'time', 'periodicity', 'execution_time', 'is_publiс')
 
-@admin.register(RelatedHabit)
-class RelatedHabitAdmin(admin.ModelAdmin):
-    list_display = ('pk', 'related_link')
-    search_fields = ('pk',)
+@admin.register(PleasantHabit)
+class PleasantHabit(admin.ModelAdmin):
+    list_display = ('pk', 'habit')
+
+@admin.register(UsefulHabit)
+class UsefulHabit(admin.ModelAdmin):
+    list_display = ('pk', 'habit', 'pleasant_habit', 'reward')
+
+@admin.register(UserUsefulHabit)
+class UserUsefulHabit(admin.ModelAdmin):
+    list_display = ('pk', 'user', 'useful_habit')
