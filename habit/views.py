@@ -6,6 +6,7 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.viewsets import ModelViewSet
 
 from habit.models import Location, Action, Reward, Habit, PleasantHabit, UsefulHabit, Periodicity
+from habit.paginators import ManualPagination
 from habit.serializers import LocationSerializer, ActionSerializer, RewardSerializer, HabitSerializer, \
     PleasantHabitSerializer, UsefulHabitSerializer, PeriodicitySerializer
 
@@ -14,10 +15,8 @@ from habit.serializers import LocationSerializer, ActionSerializer, RewardSerial
 class PeriodicityListAPIView(generics.ListAPIView):
     serializer_class = PeriodicitySerializer
     queryset = Periodicity.objects.all()
-
 class PeriodicityCreateAPIView(generics.CreateAPIView):
     serializer_class = PeriodicitySerializer
-
 class PeriodicityDestroyAPIView(generics.DestroyAPIView):
     serializer_class = PeriodicitySerializer
     queryset = Periodicity.objects.all()
@@ -26,10 +25,8 @@ class PeriodicityDestroyAPIView(generics.DestroyAPIView):
 class LocationListAPIView(generics.ListAPIView):
     serializer_class = LocationSerializer
     queryset = Location.objects.all()
-
 class LocationCreateAPIView(generics.CreateAPIView):
     serializer_class = LocationSerializer
-
 class LocationDestroyAPIView(generics.DestroyAPIView):
     serializer_class = LocationSerializer
     queryset = Location.objects.all()
@@ -39,10 +36,8 @@ class LocationDestroyAPIView(generics.DestroyAPIView):
 class ActionListAPIView(generics.ListAPIView):
     serializer_class = ActionSerializer
     queryset = Action.objects.all()
-
 class ActionCreateAPIView(generics.CreateAPIView):
     serializer_class = ActionSerializer
-
 class ActionDestroyAPIView(generics.DestroyAPIView):
     serializer_class = ActionSerializer
     queryset = Action.objects.all()
@@ -52,10 +47,8 @@ class ActionDestroyAPIView(generics.DestroyAPIView):
 class RewardListAPIView(generics.ListAPIView):
     serializer_class = RewardSerializer
     queryset = Reward.objects.all()
-
 class RewardCreateAPIView(generics.CreateAPIView):
     serializer_class = RewardSerializer
-
 class RewardDestroyAPIView(generics.DestroyAPIView):
     serializer_class = RewardSerializer
     queryset = Reward.objects.all()
@@ -65,6 +58,7 @@ class RewardDestroyAPIView(generics.DestroyAPIView):
 class HabitViewSet(ModelViewSet):
     serializer_class = HabitSerializer
     queryset = Habit.objects.all()
+    pagination_class = ManualPagination
 
     def perform_create(self, serializer):
         habit = serializer.save()
@@ -79,9 +73,11 @@ class HabitViewSet(ModelViewSet):
 class PleasantHabitViewSet(ModelViewSet):
     serializer_class = PleasantHabitSerializer
     queryset = PleasantHabit.objects.all()
+    pagination_class = ManualPagination
 
 # --- USEFUL HABIT ---
 class UsefulHabitViewSet(ModelViewSet):
     serializer_class = UsefulHabitSerializer
     queryset = UsefulHabit.objects.all()
+    pagination_class = ManualPagination
 
