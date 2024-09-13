@@ -41,7 +41,7 @@ class Action(TruncateTableMixin, models.Model):
     """Действие"""
 
     name = models.CharField(verbose_name="Название", max_length=100, unique=True)
-    is_pleasant = models.BooleanField(verbose_name="приятное", default=False)
+    is_pleasant = models.BooleanField(verbose_name="Приятное", default=False)
     description = models.TextField(verbose_name="Объяснение", **NULLABLE)
 
     class Meta:
@@ -134,6 +134,15 @@ class PleasantHabit(TruncateTableMixin, models.Model):
         verbose_name = "Приятная привычка"
         verbose_name_plural = "Приятные привычки"
         ordering = ("pk",)
+
+    def clean(self):
+        # Валидация приятного действия
+        if not self.habit.action.is_pleasant:
+            raise ValidationError("Действие привычки не является приятным")
+
+    def save(self,*args,force_insert=False,force_update=False,using=None,update_fields=None):
+        self.full_clean()
+        super().save(*args,force_insert,force_update,using,update_fields)
 
     def __str__(self):
         return str(self.habit)
