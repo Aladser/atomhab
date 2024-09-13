@@ -9,7 +9,7 @@ from habit.models import Location, Action, Reward, Habit, PleasantHabit, UsefulH
 from habit.paginators import ManualPagination
 from habit.serializers import LocationSerializer, ActionSerializer, RewardSerializer, HabitSerializer, \
     PleasantHabitSerializer, UsefulHabitSerializer, PeriodicitySerializer
-from libs.owner_queryset import OwnerHabitQuerysetMixin
+from libs.owner_queryset import OwnerHabitQuerysetMixin, OwnerQuerysetMixin
 
 
 # ---PERIODICITY---
@@ -71,13 +71,13 @@ class HabitViewSet(OwnerHabitQuerysetMixin, ModelViewSet):
             raise ValidationError(f"<<{str(habit)}>>: дубликат привычки")
 
 # --- PLEASANT HABIT ---
-class PleasantHabitViewSet(ModelViewSet):
+class PleasantHabitViewSet(OwnerQuerysetMixin, ModelViewSet):
     serializer_class = PleasantHabitSerializer
     queryset = PleasantHabit.objects.all()
     pagination_class = ManualPagination
 
 # --- USEFUL HABIT ---
-class UsefulHabitViewSet(ModelViewSet):
+class UsefulHabitViewSet(OwnerQuerysetMixin, ModelViewSet):
     serializer_class = UsefulHabitSerializer
     queryset = UsefulHabit.objects.all()
     pagination_class = ManualPagination
