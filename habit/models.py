@@ -157,9 +157,8 @@ class UsefulHabit(TruncateTableMixin, models.Model):
     )
 
     def clean(self):
-        error_msg = "Должна быть заполнена связанная приятная привычка или вознаграждение, но не одновременно"
         if self.pleasant_habit is None and self.reward is None or self.pleasant_habit is not None and self.reward is not None:
-                raise ValidationError(error_msg)
+            raise ValidationError("Должна быть заполнена связанная приятная привычка или вознаграждение, но не одновременно")
 
     def save(self,*args,force_insert=False,force_update=False,using=None,update_fields=None):
         self.full_clean()
