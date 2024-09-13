@@ -131,7 +131,12 @@ class Habit(TruncateTableMixin, models.Model):
 # ПРИЯТНАЯ ПРИВЫЧКА
 class PleasantHabit(TruncateTableMixin, models.Model):
     """Приятная привычка"""
-
+    author = models.ForeignKey(
+        to=User,
+        verbose_name="Автор",
+        on_delete=models.CASCADE,
+        related_name='pleasant_habit',
+    )
     habit = models.OneToOneField(
         to=Habit,
         verbose_name="Привычка",
@@ -160,7 +165,12 @@ class PleasantHabit(TruncateTableMixin, models.Model):
 # ПОЛЕЗНАЯ ПРИВЫЧКА
 class UsefulHabit(TruncateTableMixin, models.Model):
     """Полезная привычка"""
-
+    author = models.ForeignKey(
+        to=User,
+        verbose_name="Автор",
+        on_delete=models.CASCADE,
+        related_name='userful_habit',
+    )
     habit = models.OneToOneField(
         to=Habit,
         verbose_name="Привычка",
@@ -205,29 +215,3 @@ class UsefulHabit(TruncateTableMixin, models.Model):
             return f"{str(self.habit)} (награда - {self.reward})"
         else:
             return f"{str(self.habit)} (награда - {self.pleasant_habit.name})"
-
-# ПОЛЬЗОВАТЕЛЬСКАЯ ПОЛЕЗНАЯ ПРИВЫЧКА
-class UserUsefulHabit(TruncateTableMixin, models.Model):
-    """Пользовательская приятная привычка"""
-
-    user = models.ForeignKey(
-        to=User,
-        verbose_name="Пользователь",
-        on_delete=models.CASCADE,
-        related_name='user_useful_habits',
-    )
-
-    useful_habit = models.ForeignKey(
-        to=UsefulHabit,
-        verbose_name="Полезная привычка",
-        on_delete=models.CASCADE,
-        related_name='user_useful_habits',
-    )
-
-    class Meta:
-        verbose_name = "Пользовательская приятная привычка"
-        verbose_name_plural = "Пользовательская приятные привычки"
-        ordering = ("pk",)
-
-    def __str__(self):
-        return str(self.habit)

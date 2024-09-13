@@ -9,6 +9,7 @@ from habit.models import Location, Action, Reward, Habit, PleasantHabit, UsefulH
 from habit.paginators import ManualPagination
 from habit.serializers import LocationSerializer, ActionSerializer, RewardSerializer, HabitSerializer, \
     PleasantHabitSerializer, UsefulHabitSerializer, PeriodicitySerializer
+from libs.owner_queryset import OwnerHabitQuerysetMixin
 
 
 # ---PERIODICITY---
@@ -55,7 +56,7 @@ class RewardDestroyAPIView(generics.DestroyAPIView):
 
 
 # --- HABIT ---
-class HabitViewSet(ModelViewSet):
+class HabitViewSet(OwnerHabitQuerysetMixin, ModelViewSet):
     serializer_class = HabitSerializer
     queryset = Habit.objects.all()
     pagination_class = ManualPagination
