@@ -5,17 +5,22 @@ from habit.models import Periodicity, Location, Action, Reward, Habit, PleasantH
 
 @admin.register(Periodicity)
 class DatePeriodAdmin(admin.ModelAdmin):
-    list_display = ('name', 'interval')
+    list_display = ('pk', 'name', 'interval')
     search_fields = ('name',)
 
 @admin.register(Location)
 class LocationAdmin(admin.ModelAdmin):
-    list_display = ('name',)
+    list_display = ('pk', 'name',)
+    search_fields = ('name',)
+
+@admin.register(Reward)
+class RewardAdmin(admin.ModelAdmin):
+    list_display = ('pk', 'name',)
     search_fields = ('name',)
 
 @admin.register(Action)
 class ActionAdmin(admin.ModelAdmin):
-    list_display = ('name', 'is_pleasant')
+    list_display = ('pk', 'name', 'is_pleasant')
     search_fields = ('name',)
 
 @admin.register(Habit)

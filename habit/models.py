@@ -139,6 +139,7 @@ class PleasantHabit(TruncateTableMixin, ManualModelSavingMixin, models.Model):
         verbose_name="Привычка",
         on_delete=models.CASCADE,
         related_name='pleasant_habits',
+        **NULLABLE
     )
 
     class Meta:
@@ -148,9 +149,13 @@ class PleasantHabit(TruncateTableMixin, ManualModelSavingMixin, models.Model):
         unique_together = ('author', 'habit')
 
     def clean(self):
+        print(self.habit)
         # Валидация приятного действия
         if not self.habit.action.is_pleasant:
             raise ValidationError("Действие привычки не является приятным")
+        # Валидация разрешения пользователя использовать указанную привычку
+        if not self.author.is_superuser and self.habit.author != self.author and not self.habit.is_publiс:
+            raise ValidationError("Вы не можете использовать эту привычку")
 
     def __str__(self):
         return str(self.habit)
@@ -191,9 +196,12 @@ class UsefulHabit(TruncateTableMixin, ManualModelSavingMixin, models.Model):
         # Валидация полезного действия
         if self.habit.action.is_pleasant:
             raise ValidationError("Действие привычки не является полезным")
-        # Валидация указания вознаграждения: полезная привычка или вознаграждение
+        # Валидация указанного вознаграждения: полезная привычка или вознаграждение
         if self.pleasant_habit is None and self.reward is None or self.pleasant_habit is not None and self.reward is not None:
             raise ValidationError("Должна быть заполнена связанная приятная привычка или вознаграждение, но не одновременно")
+        # Валидация разрешения пользователя использовать указанную привычку
+        if not self.author.is_superuser and self.habit.author != self.author and not self.habit.is_publiс:
+            raise ValidationError("Вы не можете использовать эту привычку")
 
     class Meta:
         verbose_name = "Полезная привычка"
