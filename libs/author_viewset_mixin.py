@@ -2,7 +2,7 @@ from authen_drf.permissions import IsAuthorPermission
 
 
 class AuthorViewsetMixin:
-    """Миксин, вызывающий методы с учетом автора объекта """
+    """Миксин, вызывающий методыб учитывая авторизованного пользорвателя """
 
     def get_permissions(self):
         if self.action in ['detail', 'update', 'partial_update', 'delete']:
