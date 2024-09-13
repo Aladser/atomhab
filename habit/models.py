@@ -3,6 +3,7 @@ from rest_framework.exceptions import ValidationError
 
 from authen_drf.models import User
 from config.settings import NULLABLE
+from libs.manual_model_saving_mixin import ManualModelSavingMixin
 from libs.truncate_table_mixin import TruncateTableMixin
 
 
@@ -78,7 +79,7 @@ class Reward(TruncateTableMixin, models.Model):
         return self.name
 
 # ПРИВЫЧКА
-class Habit(TruncateTableMixin, models.Model):
+class Habit(TruncateTableMixin, ManualModelSavingMixin, models.Model):
     """ Привычка. Ее можно сделать и полезной, и приятной """
 
     author = models.ForeignKey(
@@ -115,58 +116,59 @@ class Habit(TruncateTableMixin, models.Model):
         if self.execution_time > 120:
             raise ValidationError("Время выполнения не должно превышать 120 секунд")
 
-    def save(self,*args,force_insert=False,force_update=False,using=None,update_fields=None):
-        self.full_clean()
-        super().save(*args,force_insert,force_update,using,update_fields)
-
     class Meta:
         verbose_name = "Привычка"
         verbose_name_plural = "Привычки"
-        unique_together = ('location', 'action', 'time', 'periodicity', 'execution_time', 'is_publiс')
+        unique_together = ('location', 'action', 'time')
         ordering = ("pk",)
 
     def __str__(self):
         return f"{self.action} в {self.time} в {self.location}"
 
 # ПРИЯТНАЯ ПРИВЫЧКА
-class PleasantHabit(TruncateTableMixin, models.Model):
+class PleasantHabit(TruncateTableMixin, ManualModelSavingMixin, models.Model):
     """Приятная привычка"""
-
-    habit = models.OneToOneField(
+    author = models.ForeignKey(
+        to=User,
+        verbose_name="Автор",
+        on_delete=models.CASCADE,
+        related_name='pleasant_habits',
+    )
+    habit = models.ForeignKey(
         to=Habit,
         verbose_name="Привычка",
         on_delete=models.CASCADE,
-        related_name='pleasant_habit',
-        unique=True
+        related_name='pleasant_habits',
     )
 
     class Meta:
         verbose_name = "Приятная привычка"
         verbose_name_plural = "Приятные привычки"
         ordering = ("pk",)
+        unique_together = ('author', 'habit')
 
     def clean(self):
         # Валидация приятного действия
         if not self.habit.action.is_pleasant:
             raise ValidationError("Действие привычки не является приятным")
 
-    def save(self,*args,force_insert=False,force_update=False,using=None,update_fields=None):
-        self.full_clean()
-        super().save(*args,force_insert,force_update,using,update_fields)
-
     def __str__(self):
         return str(self.habit)
 
 # ПОЛЕЗНАЯ ПРИВЫЧКА
-class UsefulHabit(TruncateTableMixin, models.Model):
+class UsefulHabit(TruncateTableMixin, ManualModelSavingMixin, models.Model):
     """Полезная привычка"""
-
-    habit = models.OneToOneField(
+    author = models.ForeignKey(
+        to=User,
+        verbose_name="Автор",
+        on_delete=models.CASCADE,
+        related_name='userful_habit',
+    )
+    habit = models.ForeignKey(
         to=Habit,
         verbose_name="Привычка",
         on_delete=models.CASCADE,
         related_name='userful_habit',
-        unique=True
     )
     pleasant_habit = models.ForeignKey(
         to=PleasantHabit,
@@ -186,48 +188,21 @@ class UsefulHabit(TruncateTableMixin, models.Model):
     )
 
     def clean(self):
+        # Валидация полезного действия
+        if self.habit.action.is_pleasant:
+            raise ValidationError("Действие привычки не является полезным")
         # Валидация указания вознаграждения: полезная привычка или вознаграждение
         if self.pleasant_habit is None and self.reward is None or self.pleasant_habit is not None and self.reward is not None:
             raise ValidationError("Должна быть заполнена связанная приятная привычка или вознаграждение, но не одновременно")
 
-    def save(self,*args,force_insert=False,force_update=False,using=None,update_fields=None):
-        self.full_clean()
-        super().save(*args,force_insert,force_update,using,update_fields)
-
     class Meta:
         verbose_name = "Полезная привычка"
         verbose_name_plural = "Полезные привычки"
-        unique_together = ('habit','pleasant_habit', 'reward')
         ordering = ("pk",)
+        unique_together = ('author', 'habit')
 
     def __str__(self):
         if self.pleasant_habit is None:
             return f"{str(self.habit)} (награда - {self.reward})"
         else:
             return f"{str(self.habit)} (награда - {self.pleasant_habit.name})"
-
-# ПОЛЬЗОВАТЕЛЬСКАЯ ПОЛЕЗНАЯ ПРИВЫЧКА
-class UserUsefulHabit(TruncateTableMixin, models.Model):
-    """Пользовательская приятная привычка"""
-
-    user = models.ForeignKey(
-        to=User,
-        verbose_name="Пользователь",
-        on_delete=models.CASCADE,
-        related_name='user_useful_habits',
-    )
-
-    useful_habit = models.ForeignKey(
-        to=UsefulHabit,
-        verbose_name="Полезная привычка",
-        on_delete=models.CASCADE,
-        related_name='user_useful_habits',
-    )
-
-    class Meta:
-        verbose_name = "Пользовательская приятная привычка"
-        verbose_name_plural = "Пользовательская приятные привычки"
-        ordering = ("pk",)
-
-    def __str__(self):
-        return str(self.habit)
