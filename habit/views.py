@@ -11,7 +11,7 @@ from habit.serializers import LocationSerializer, ActionSerializer, RewardSerial
 from libs.author_viewset_mixin import AuthorViewsetMixin
 
 
-# ---PERIODICITY---
+# ---Периодичность---
 class PeriodicityListAPIView(generics.ListAPIView):
     serializer_class = PeriodicitySerializer
     queryset = Periodicity.objects.all()
@@ -21,7 +21,8 @@ class PeriodicityDestroyAPIView(generics.DestroyAPIView):
     serializer_class = PeriodicitySerializer
     queryset = Periodicity.objects.all()
 
-# ---LOCATION---
+
+# ---Место---
 class LocationListAPIView(generics.ListAPIView):
     serializer_class = LocationSerializer
     queryset = Location.objects.all()
@@ -32,7 +33,7 @@ class LocationDestroyAPIView(generics.DestroyAPIView):
     queryset = Location.objects.all()
 
 
-# ---ACTION---
+# ---Действие---
 class ActionListAPIView(generics.ListAPIView):
     serializer_class = ActionSerializer
     queryset = Action.objects.all()
@@ -43,7 +44,7 @@ class ActionDestroyAPIView(generics.DestroyAPIView):
     queryset = Action.objects.all()
 
 
-# ---REWARD---
+# ---Вознаграждение---
 class RewardListAPIView(generics.ListAPIView):
     serializer_class = RewardSerializer
     queryset = Reward.objects.all()
@@ -54,7 +55,12 @@ class RewardDestroyAPIView(generics.DestroyAPIView):
     queryset = Reward.objects.all()
 
 
-# --- HABIT ---
+# --- Публичные привычки ---
+class PublicHabitListAPIView(generics.ListAPIView):
+    serializer_class = HabitSerializer
+    queryset = Habit.objects.filter(is_publiс=True)
+
+# --- Привычка ---
 class HabitViewSet(AuthorViewsetMixin, ModelViewSet):
     serializer_class = HabitSerializer
     queryset = Habit.objects.all()
@@ -69,17 +75,18 @@ class HabitViewSet(AuthorViewsetMixin, ModelViewSet):
         except ValidationError as e:
             raise exceptions.ValidationError(f"Привычка <<{habit}>> уже существует")
 
-# --- PLEASANT HABIT ---
+# --- Приятная привычка ---
 class PleasantHabitViewSet(AuthorViewsetMixin, ModelViewSet):
     serializer_class = PleasantHabitSerializer
     queryset = PleasantHabit.objects.all()
     pagination_class = ManualPagination
 
-# --- USEFUL HABIT ---
+# --- Полезная привычка ---
 class UsefulHabitViewSet(AuthorViewsetMixin, ModelViewSet):
     serializer_class = UsefulHabitSerializer
     queryset = UsefulHabit.objects.all()
     pagination_class = ManualPagination
+
 
 
 

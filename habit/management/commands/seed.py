@@ -69,12 +69,12 @@ class Command(BaseCommand):
         ]
 
         habit_param_obj_list = [
-            {'location': place_1, 'action': pleasant_action_1, 'periodicity': hour_period, 'author':userlist[0]},
+            {'location': place_1, 'action': pleasant_action_1, 'periodicity': hour_period, 'author':userlist[0],'is_publiс':True},
             {'location': place_2, 'action': pleasant_action_2, 'periodicity': day_period, 'author':userlist[1]},
             {'location': place_3, 'action': pleasant_action_3, 'periodicity': week_period, 'author':userlist[2]},
             {'location':place_1, 'action': useful_action_1, 'periodicity': hour_period, 'author':userlist[0]},
-            {'location': place_2, 'action': useful_action_2, 'periodicity': day_period, 'author':userlist[1]},
-            {'location': place_3, 'action': useful_action_3, 'periodicity': week_period, 'author':userlist[2]},
+            {'location': place_2, 'action': useful_action_2, 'periodicity': day_period, 'author':userlist[1],'is_publiс':True},
+            {'location': place_3, 'action': useful_action_3, 'periodicity': week_period, 'author':userlist[2],'is_publiс':True},
         ]
         Seeding.seed_table(Habit, habit_param_obj_list)
 
