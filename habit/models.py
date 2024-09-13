@@ -100,6 +100,15 @@ class Habit(TruncateTableMixin, models.Model):
     execution_time = models.PositiveIntegerField(verbose_name="Время выполнения, в секундах", default=120)
     is_publiс = models.BooleanField(verbose_name="Общедоступность", default=False)
 
+    def clean(self):
+        # Валидация времени исполнения
+        if self.execution_time > 120:
+            raise ValidationError("Время выполнения не должно превышать 120 секунд")
+
+    def save(self,*args,force_insert=False,force_update=False,using=None,update_fields=None):
+        self.full_clean()
+        super().save(*args,force_insert,force_update,using,update_fields)
+
     class Meta:
         verbose_name = "Привычка"
         verbose_name_plural = "Привычки"
@@ -158,6 +167,7 @@ class UsefulHabit(TruncateTableMixin, models.Model):
     )
 
     def clean(self):
+        # Валидация указания вознаграждения: полезная привычка или вознаграждение
         if self.pleasant_habit is None and self.reward is None or self.pleasant_habit is not None and self.reward is not None:
             raise ValidationError("Должна быть заполнена связанная приятная привычка или вознаграждение, но не одновременно")
 
