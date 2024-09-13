@@ -4,12 +4,14 @@ from rest_framework.routers import DefaultRouter
 from habit.apps import HabitConfig
 from habit.views import LocationListAPIView, ActionListAPIView, RewardListAPIView, LocationCreateAPIView, \
     LocationDestroyAPIView, ActionCreateAPIView, ActionDestroyAPIView, RewardCreateAPIView, RewardDestroyAPIView, \
-    HabitViewSet
+    HabitViewSet, PleasantHabitViewSet, UsefulHabitViewSet
 
 app_name = HabitConfig.name
 
 router = DefaultRouter()
-router.register(r'habit', HabitViewSet, basename='habit')
+router.register(r'habit', HabitViewSet, 'habit')
+router.register(r'pleasant-habit', PleasantHabitViewSet, 'pleasant-habit')
+router.register(r'useful-habit', UsefulHabitViewSet, 'useful-habit')
 
 urlpatterns = [
     path('location/', LocationListAPIView.as_view(), name='location-list'),

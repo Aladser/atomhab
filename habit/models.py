@@ -118,6 +118,7 @@ class PleasantHabit(TruncateTableMixin, models.Model):
         verbose_name="Привычка",
         on_delete=models.CASCADE,
         related_name='pleasant_habits',
+        unique=True
     )
 
     class Meta:
@@ -143,14 +144,14 @@ class UsefulHabit(TruncateTableMixin, models.Model):
         verbose_name="Приятная привычка",
         on_delete=models.CASCADE,
         related_name='userful_habits',
-        **NULLABLE,
+        default=None
     )
     reward = models.ForeignKey(
         to=Reward,
         verbose_name="Вознаграждение",
         on_delete=models.CASCADE,
         related_name='userful_habits',
-        **NULLABLE,
+        default=None
     )
 
     class Meta:
