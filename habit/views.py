@@ -3,13 +3,16 @@ import datetime
 from django.db import IntegrityError
 from rest_framework import generics
 from rest_framework.exceptions import ValidationError
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
 
+from authen_drf.permissions import IsAuthorPermission
 from habit.models import Location, Action, Reward, Habit, PleasantHabit, UsefulHabit, Periodicity
 from habit.paginators import ManualPagination
 from habit.serializers import LocationSerializer, ActionSerializer, RewardSerializer, HabitSerializer, \
     PleasantHabitSerializer, UsefulHabitSerializer, PeriodicitySerializer
-from libs.owner_queryset import OwnerHabitQuerysetMixin, OwnerQuerysetMixin
+from libs.author_perm_mixin import AuthorPermMixin
+from libs.author_queryset import AuthorHabitQuerysetMixin, AuthorQuerysetMixin
 
 
 # ---PERIODICITY---
@@ -56,7 +59,7 @@ class RewardDestroyAPIView(generics.DestroyAPIView):
 
 
 # --- HABIT ---
-class HabitViewSet(OwnerHabitQuerysetMixin, ModelViewSet):
+class HabitViewSet(AuthorHabitQuerysetMixin, AuthorPermMixin, ModelViewSet):
     serializer_class = HabitSerializer
     queryset = Habit.objects.all()
     pagination_class = ManualPagination
@@ -71,14 +74,16 @@ class HabitViewSet(OwnerHabitQuerysetMixin, ModelViewSet):
             raise ValidationError(f"<<{str(habit)}>>: дубликат привычки")
 
 # --- PLEASANT HABIT ---
-class PleasantHabitViewSet(OwnerQuerysetMixin, ModelViewSet):
+class PleasantHabitViewSet(AuthorQuerysetMixin, AuthorPermMixin, ModelViewSet):
     serializer_class = PleasantHabitSerializer
     queryset = PleasantHabit.objects.all()
     pagination_class = ManualPagination
 
 # --- USEFUL HABIT ---
-class UsefulHabitViewSet(OwnerQuerysetMixin, ModelViewSet):
+class UsefulHabitViewSet(AuthorQuerysetMixin, AuthorPermMixin, ModelViewSet):
     serializer_class = UsefulHabitSerializer
     queryset = UsefulHabit.objects.all()
     pagination_class = ManualPagination
+
+
 

@@ -1,5 +1,5 @@
 
-class OwnerHabitQuerysetMixin:
+class AuthorHabitQuerysetMixin:
     """Доступ к списку своих или всех привычек"""
 
     def get_queryset(self):
@@ -11,7 +11,7 @@ class OwnerHabitQuerysetMixin:
             q2 = queryset.filter(is_publiс=True)
             return q1.union(q2)
 
-class OwnerQuerysetMixin:
+class AuthorQuerysetMixin:
     """Доступ к списку своих или всех элементов модели"""
 
     def get_queryset(self):
