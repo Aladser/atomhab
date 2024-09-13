@@ -98,7 +98,7 @@ class Habit(TruncateTableMixin, models.Model):
 
     time = models.TimeField(verbose_name="Время",auto_now_add=True)
     execution_time = models.PositiveIntegerField(verbose_name="Время выполнения, в секундах", default=120)
-    is_publiс = models.BooleanField(verbose_name="Общедоступный", default=False)
+    is_publiс = models.BooleanField(verbose_name="Общедоступность", default=False)
 
     class Meta:
         verbose_name = "Привычка"
@@ -113,11 +113,11 @@ class Habit(TruncateTableMixin, models.Model):
 class PleasantHabit(TruncateTableMixin, models.Model):
     """Приятная привычка"""
 
-    habit = models.ForeignKey(
+    habit = models.OneToOneField(
         to=Habit,
         verbose_name="Привычка",
         on_delete=models.CASCADE,
-        related_name='pleasant_habits',
+        related_name='pleasant_habit',
         unique=True
     )
 
@@ -133,11 +133,12 @@ class PleasantHabit(TruncateTableMixin, models.Model):
 class UsefulHabit(TruncateTableMixin, models.Model):
     """Полезная привычка"""
 
-    habit = models.ForeignKey(
+    habit = models.OneToOneField(
         to=Habit,
         verbose_name="Привычка",
         on_delete=models.CASCADE,
-        related_name='userful_habits',
+        related_name='userful_habit',
+        unique=True
     )
     pleasant_habit = models.ForeignKey(
         to=PleasantHabit,
