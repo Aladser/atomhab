@@ -6,16 +6,16 @@ from config.settings import NULLABLE
 from libs.truncate_table_mixin import TruncateTableMixin
 
 
-# ВРЕМЕННОЙ ИНТЕРВАЛ
-class DatePeriod(TruncateTableMixin, models.Model):
-    """Временной интервал"""
+# ПЕРИОДИЧНОСТЬ
+class Periodicity(TruncateTableMixin, models.Model):
+    """Периодичность"""
 
     name = models.CharField(verbose_name="Название", max_length=30, unique=True)
     interval = models.PositiveIntegerField(verbose_name="Интервал (в секундах)", unique=True)
 
     class Meta:
-        verbose_name = "Интервал рассылки"
-        verbose_name_plural = "интервалы рассылки"
+        verbose_name = "Периодичность"
+        verbose_name_plural = "Периодичности"
         ordering = ("pk",)
 
     def __str__(self):
@@ -90,7 +90,7 @@ class Habit(TruncateTableMixin, models.Model):
         related_name='habits',
     )
     periodicity = models.ForeignKey(
-        to=DatePeriod,
+        to=Periodicity,
         verbose_name="Периодичность",
         on_delete=models.CASCADE,
         related_name='habits',

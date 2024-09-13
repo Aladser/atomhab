@@ -1,9 +1,9 @@
 from django.contrib import admin
 
-from habit.models import DatePeriod, Location, Action, Reward, Habit, PleasantHabit, UsefulHabit, UserUsefulHabit
+from habit.models import Periodicity, Location, Action, Reward, Habit, PleasantHabit, UsefulHabit, UserUsefulHabit
 
 
-@admin.register(DatePeriod)
+@admin.register(Periodicity)
 class DatePeriodAdmin(admin.ModelAdmin):
     list_display = ('name', 'interval')
     search_fields = ('name',)
