@@ -1,9 +1,10 @@
 import datetime
+from lib2to3.fixes.fix_input import context
 
-from django.db import IntegrityError
-from rest_framework import generics
-from rest_framework.exceptions import ValidationError
+from django.core.exceptions import ValidationError
+from rest_framework import generics, exceptions, status
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
 from authen_drf.permissions import IsAuthorPermission
@@ -11,8 +12,7 @@ from habit.models import Location, Action, Reward, Habit, PleasantHabit, UsefulH
 from habit.paginators import ManualPagination
 from habit.serializers import LocationSerializer, ActionSerializer, RewardSerializer, HabitSerializer, \
     PleasantHabitSerializer, UsefulHabitSerializer, PeriodicitySerializer
-from libs.author_perm_mixin import AuthorPermMixin
-from libs.author_queryset import AuthorHabitQuerysetMixin, AuthorQuerysetMixin
+from libs.queryset_mixin import AuthorQuerysetMixin
 
 
 # ---PERIODICITY---
@@ -59,10 +59,20 @@ class RewardDestroyAPIView(generics.DestroyAPIView):
 
 
 # --- HABIT ---
-class HabitViewSet(AuthorHabitQuerysetMixin, AuthorPermMixin, ModelViewSet):
+class HabitViewSet(AuthorQuerysetMixin, ModelViewSet):
     serializer_class = HabitSerializer
     queryset = Habit.objects.all()
     pagination_class = ManualPagination
+
+    def get_permissions(self):
+        if self.action in ['detail', 'update', 'partial_update', 'delete']:
+            self.permission_classes = [IsAuthorPermission]
+        return super().get_permissions()
+
+    def get_serializer(self, *args, **kwargs):
+        if self.action == 'create':
+            kwargs['data']['author'] = self.request.user.pk
+        return super().get_serializer(*args, **kwargs)
 
     def perform_create(self, serializer):
         habit = serializer.save()
@@ -70,17 +80,17 @@ class HabitViewSet(AuthorHabitQuerysetMixin, AuthorPermMixin, ModelViewSet):
         habit.time = datetime.time(habit.time.hour, habit.time.minute)
         try:
             habit.save()
-        except IntegrityError as e:
-            raise ValidationError(f"<<{str(habit)}>>: дубликат привычки")
+        except ValidationError as e:
+            raise exceptions.ValidationError(f"Привычка <<{habit}>> уже существует")
 
 # --- PLEASANT HABIT ---
-class PleasantHabitViewSet(AuthorQuerysetMixin, AuthorPermMixin, ModelViewSet):
+class PleasantHabitViewSet(AuthorQuerysetMixin, ModelViewSet):
     serializer_class = PleasantHabitSerializer
     queryset = PleasantHabit.objects.all()
     pagination_class = ManualPagination
 
 # --- USEFUL HABIT ---
-class UsefulHabitViewSet(AuthorQuerysetMixin, AuthorPermMixin, ModelViewSet):
+class UsefulHabitViewSet(AuthorQuerysetMixin, ModelViewSet):
     serializer_class = UsefulHabitSerializer
     queryset = UsefulHabit.objects.all()
     pagination_class = ManualPagination
