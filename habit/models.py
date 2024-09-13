@@ -1,21 +1,32 @@
 from django.db import models
+from rest_framework.exceptions import ValidationError
 
 from authen_drf.models import User
 from config.settings import NULLABLE
 from libs.truncate_table_mixin import TruncateTableMixin
 
 
-# ВРЕМЕННОЙ ИНТЕРВАЛ
-class DatePeriod(models.Model):
-    """Временной интервал"""
+# ПЕРИОДИЧНОСТЬ
+class Periodicity(TruncateTableMixin, models.Model):
+    """Периодичность"""
 
     name = models.CharField(verbose_name="Название", max_length=30, unique=True)
     interval = models.PositiveIntegerField(verbose_name="Интервал (в секундах)", unique=True)
 
     class Meta:
-        verbose_name = "Интервал рассылки"
-        verbose_name_plural = "интервалы рассылки"
+        verbose_name = "Периодичность"
+        verbose_name_plural = "Периодичности"
         ordering = ("pk",)
+
+    def clean(self):
+        print(self.interval)
+        # Валидация периодичности - не больше 1 недели
+        if self.interval > 60*60*24*7:
+            raise ValidationError("Интервал периодичности не должен превышать одну неделю")
+
+    def save(self,*args,force_insert=False,force_update=False,using=None,update_fields=None):
+        self.full_clean()
+        super().save(*args,force_insert,force_update,using,update_fields)
 
     def __str__(self):
         return self.name
@@ -40,7 +51,7 @@ class Action(TruncateTableMixin, models.Model):
     """Действие"""
 
     name = models.CharField(verbose_name="Название", max_length=100, unique=True)
-    is_pleasant = models.BooleanField(verbose_name="приятное", default=False)
+    is_pleasant = models.BooleanField(verbose_name="Приятное", default=False)
     description = models.TextField(verbose_name="Объяснение", **NULLABLE)
 
     class Meta:
@@ -89,15 +100,24 @@ class Habit(TruncateTableMixin, models.Model):
         related_name='habits',
     )
     periodicity = models.ForeignKey(
-        to=DatePeriod,
+        to=Periodicity,
         verbose_name="Периодичность",
         on_delete=models.CASCADE,
         related_name='habits',
     )
 
-    time = models.TimeField(verbose_name="Время",auto_now=True)
+    time = models.TimeField(verbose_name="Время",auto_now_add=True)
     execution_time = models.PositiveIntegerField(verbose_name="Время выполнения, в секундах", default=120)
-    is_publiс = models.BooleanField(verbose_name="Общедоступный", default=False)
+    is_publiс = models.BooleanField(verbose_name="Общедоступность", default=False)
+
+    def clean(self):
+        # Валидация времени исполнения
+        if self.execution_time > 120:
+            raise ValidationError("Время выполнения не должно превышать 120 секунд")
+
+    def save(self,*args,force_insert=False,force_update=False,using=None,update_fields=None):
+        self.full_clean()
+        super().save(*args,force_insert,force_update,using,update_fields)
 
     class Meta:
         verbose_name = "Привычка"
@@ -112,17 +132,27 @@ class Habit(TruncateTableMixin, models.Model):
 class PleasantHabit(TruncateTableMixin, models.Model):
     """Приятная привычка"""
 
-    habit = models.ForeignKey(
+    habit = models.OneToOneField(
         to=Habit,
         verbose_name="Привычка",
         on_delete=models.CASCADE,
-        related_name='pleasant_habits',
+        related_name='pleasant_habit',
+        unique=True
     )
 
     class Meta:
         verbose_name = "Приятная привычка"
         verbose_name_plural = "Приятные привычки"
         ordering = ("pk",)
+
+    def clean(self):
+        # Валидация приятного действия
+        if not self.habit.action.is_pleasant:
+            raise ValidationError("Действие привычки не является приятным")
+
+    def save(self,*args,force_insert=False,force_update=False,using=None,update_fields=None):
+        self.full_clean()
+        super().save(*args,force_insert,force_update,using,update_fields)
 
     def __str__(self):
         return str(self.habit)
@@ -131,26 +161,38 @@ class PleasantHabit(TruncateTableMixin, models.Model):
 class UsefulHabit(TruncateTableMixin, models.Model):
     """Полезная привычка"""
 
-    habit = models.ForeignKey(
+    habit = models.OneToOneField(
         to=Habit,
         verbose_name="Привычка",
         on_delete=models.CASCADE,
-        related_name='userful_habits',
+        related_name='userful_habit',
+        unique=True
     )
     pleasant_habit = models.ForeignKey(
         to=PleasantHabit,
         verbose_name="Приятная привычка",
         on_delete=models.CASCADE,
         related_name='userful_habits',
-        **NULLABLE,
+        default=None,
+        **NULLABLE
     )
     reward = models.ForeignKey(
         to=Reward,
         verbose_name="Вознаграждение",
         on_delete=models.CASCADE,
         related_name='userful_habits',
-        **NULLABLE,
+        default=None,
+        **NULLABLE
     )
+
+    def clean(self):
+        # Валидация указания вознаграждения: полезная привычка или вознаграждение
+        if self.pleasant_habit is None and self.reward is None or self.pleasant_habit is not None and self.reward is not None:
+            raise ValidationError("Должна быть заполнена связанная приятная привычка или вознаграждение, но не одновременно")
+
+    def save(self,*args,force_insert=False,force_update=False,using=None,update_fields=None):
+        self.full_clean()
+        super().save(*args,force_insert,force_update,using,update_fields)
 
     class Meta:
         verbose_name = "Полезная привычка"

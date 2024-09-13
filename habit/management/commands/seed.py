@@ -2,7 +2,6 @@ from django.core.management import BaseCommand
 from django.shortcuts import get_object_or_404
 
 from authen_drf.management.commands.createusers import user_1_email, user_2_email, user_3_email
-from authen_drf.models import User
 from habit.models import *
 from libs.seeding import Seeding
 
@@ -32,7 +31,7 @@ reward_param_obj_list = [
     {'name': 'погулять на улице'},
 ]
 
-dateperiod_param_obj_list = [
+periodicity_param_obj_list = [
     {'name':'1 час', 'interval': 60 * 60},
     {'name': '6 часов', 'interval': 60 * 60 * 6},
     {'name': '12 часов', 'interval': 60 * 60 * 12},
@@ -43,7 +42,7 @@ dateperiod_param_obj_list = [
 
 class Command(BaseCommand):
     def handle(self, *args, **kwargs):
-        Seeding.seed_table(DatePeriod, dateperiod_param_obj_list)
+        Seeding.seed_table(Periodicity, periodicity_param_obj_list)
         Seeding.seed_table(Location, location_param_obj_list)
         Seeding.seed_table(Action, action_param_obj_list)
         Seeding.seed_table(Reward, reward_param_obj_list)
@@ -59,9 +58,9 @@ class Command(BaseCommand):
         useful_action_2 =get_object_or_404(Action, name=action_param_obj_list[4]['name'])
         useful_action_3 =get_object_or_404(Action, name=action_param_obj_list[5]['name'])
 
-        hour_period = get_object_or_404(DatePeriod, name=dateperiod_param_obj_list[0]['name'])
-        day_period = get_object_or_404(DatePeriod, name=dateperiod_param_obj_list[3]['name'])
-        week_period = get_object_or_404(DatePeriod, name=dateperiod_param_obj_list[5]['name'])
+        hour_period = get_object_or_404(Periodicity, name=periodicity_param_obj_list[0]['name'])
+        day_period = get_object_or_404(Periodicity, name=periodicity_param_obj_list[3]['name'])
+        week_period = get_object_or_404(Periodicity, name=periodicity_param_obj_list[5]['name'])
 
         userlist = [
             get_object_or_404(User, email=user_1_email),
