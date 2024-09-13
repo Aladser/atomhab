@@ -9,13 +9,10 @@ class AuthorViewsetMixin:
             self.permission_classes = [IsAuthorPermission]
         return super().get_permissions()
 
-    def get_serializer(self, *args, **kwargs):
-        if self.action == 'create':
-            kwargs['data']['author'] = self.request.user.pk
-        return super().get_serializer(*args, **kwargs)
+    def create(self, request, *args, **kwargs):
+        request.data['author'] = request.user.pk
+        return super().create(request, *args, **kwargs)
 
     def get_queryset(self):
-        if self.request.user.is_superuser:
-            return super().get_queryset()
-        else:
-            return super().get_queryset().filter(author=self.request.user)
+        queryset = super().get_queryset()
+        return queryset if self.request.user.is_superuser else queryset.filter(author=self.request.user)
