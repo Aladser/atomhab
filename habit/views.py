@@ -1,18 +1,14 @@
 import datetime
-from lib2to3.fixes.fix_input import context
 
 from django.core.exceptions import ValidationError
-from rest_framework import generics, exceptions, status
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.response import Response
+from rest_framework import generics, exceptions
 from rest_framework.viewsets import ModelViewSet
 
-from authen_drf.permissions import IsAuthorPermission
 from habit.models import Location, Action, Reward, Habit, PleasantHabit, UsefulHabit, Periodicity
 from habit.paginators import ManualPagination
 from habit.serializers import LocationSerializer, ActionSerializer, RewardSerializer, HabitSerializer, \
     PleasantHabitSerializer, UsefulHabitSerializer, PeriodicitySerializer
-from libs.queryset_mixin import AuthorQuerysetMixin
+from libs.author_viewset_mixin import AuthorViewsetMixin
 
 
 # ---PERIODICITY---
@@ -59,20 +55,10 @@ class RewardDestroyAPIView(generics.DestroyAPIView):
 
 
 # --- HABIT ---
-class HabitViewSet(AuthorQuerysetMixin, ModelViewSet):
+class HabitViewSet(AuthorViewsetMixin, ModelViewSet):
     serializer_class = HabitSerializer
     queryset = Habit.objects.all()
     pagination_class = ManualPagination
-
-    def get_permissions(self):
-        if self.action in ['detail', 'update', 'partial_update', 'delete']:
-            self.permission_classes = [IsAuthorPermission]
-        return super().get_permissions()
-
-    def get_serializer(self, *args, **kwargs):
-        if self.action == 'create':
-            kwargs['data']['author'] = self.request.user.pk
-        return super().get_serializer(*args, **kwargs)
 
     def perform_create(self, serializer):
         habit = serializer.save()
@@ -84,13 +70,13 @@ class HabitViewSet(AuthorQuerysetMixin, ModelViewSet):
             raise exceptions.ValidationError(f"Привычка <<{habit}>> уже существует")
 
 # --- PLEASANT HABIT ---
-class PleasantHabitViewSet(AuthorQuerysetMixin, ModelViewSet):
+class PleasantHabitViewSet(AuthorViewsetMixin, ModelViewSet):
     serializer_class = PleasantHabitSerializer
     queryset = PleasantHabit.objects.all()
     pagination_class = ManualPagination
 
 # --- USEFUL HABIT ---
-class UsefulHabitViewSet(AuthorQuerysetMixin, ModelViewSet):
+class UsefulHabitViewSet(AuthorViewsetMixin, ModelViewSet):
     serializer_class = UsefulHabitSerializer
     queryset = UsefulHabit.objects.all()
     pagination_class = ManualPagination
