@@ -144,15 +144,26 @@ class UsefulHabit(TruncateTableMixin, models.Model):
         verbose_name="Приятная привычка",
         on_delete=models.CASCADE,
         related_name='userful_habits',
-        default=None
+        default=None,
+        **NULLABLE
     )
     reward = models.ForeignKey(
         to=Reward,
         verbose_name="Вознаграждение",
         on_delete=models.CASCADE,
         related_name='userful_habits',
-        default=None
+        default=None,
+        **NULLABLE
     )
+
+    def clean(self):
+        error_msg = "Должна быть заполнена связанная приятная привычка или вознаграждение, но не одновременно"
+        if self.pleasant_habit is None and self.reward is None or self.pleasant_habit is not None and self.reward is not None:
+                raise ValidationError(error_msg)
+
+    def save(self,*args,force_insert=False,force_update=False,using=None,update_fields=None):
+        self.full_clean()
+        super().save(*args,force_insert,force_update,using,update_fields)
 
     class Meta:
         verbose_name = "Полезная привычка"
