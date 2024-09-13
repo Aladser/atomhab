@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from habit.models import Location, Action, Reward
+from habit.models import Location, Action, Reward, Habit
 
 
 class LocationSerializer(serializers.ModelSerializer):
@@ -16,4 +16,9 @@ class ActionSerializer(serializers.ModelSerializer):
 class RewardSerializer(serializers.ModelSerializer):
     class Meta:
         model = Reward
+        fields = '__all__'
+
+class HabitSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Habit
         fields = '__all__'

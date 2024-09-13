@@ -1,4 +1,5 @@
 from django.db import models
+from rest_framework.exceptions import ValidationError
 
 from authen_drf.models import User
 from config.settings import NULLABLE
@@ -6,7 +7,7 @@ from libs.truncate_table_mixin import TruncateTableMixin
 
 
 # ВРЕМЕННОЙ ИНТЕРВАЛ
-class DatePeriod(models.Model):
+class DatePeriod(TruncateTableMixin, models.Model):
     """Временной интервал"""
 
     name = models.CharField(verbose_name="Название", max_length=30, unique=True)
@@ -95,7 +96,7 @@ class Habit(TruncateTableMixin, models.Model):
         related_name='habits',
     )
 
-    time = models.TimeField(verbose_name="Время",auto_now=True)
+    time = models.TimeField(verbose_name="Время",auto_now_add=True)
     execution_time = models.PositiveIntegerField(verbose_name="Время выполнения, в секундах", default=120)
     is_publiс = models.BooleanField(verbose_name="Общедоступный", default=False)
 

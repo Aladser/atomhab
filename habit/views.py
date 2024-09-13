@@ -1,7 +1,12 @@
-from rest_framework import generics
+import datetime
 
-from habit.models import Location, Action, Reward
-from habit.serializers import LocationSerializer, ActionSerializer, RewardSerializer
+from django.db import IntegrityError
+from rest_framework import generics
+from rest_framework.exceptions import ValidationError
+from rest_framework.viewsets import ModelViewSet
+
+from habit.models import Location, Action, Reward, Habit
+from habit.serializers import LocationSerializer, ActionSerializer, RewardSerializer, HabitSerializer
 
 
 # LOCATION LIST
@@ -47,3 +52,20 @@ class RewardCreateAPIView(generics.CreateAPIView):
 class RewardDestroyAPIView(generics.DestroyAPIView):
     serializer_class = RewardSerializer
     queryset = Reward.objects.all()
+
+# --- HABIT ---
+class HabitViewSet(ModelViewSet):
+    serializer_class = HabitSerializer
+    queryset = Habit.objects.all()
+
+    def perform_create(self, serializer):
+        habit = serializer.save()
+        # округляет время
+        habit.time = datetime.time(habit.time.hour, habit.time.minute)
+        try:
+            habit.save()
+        except IntegrityError as e:
+            raise ValidationError(f"<<{str(habit)}>>: дубликат привычки")
+
+
+
