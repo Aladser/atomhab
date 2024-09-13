@@ -1,7 +1,13 @@
 from rest_framework import serializers
 
-from habit.models import Location, Action, Reward, Habit, PleasantHabit, UsefulHabit
+from habit.models import Location, Action, Reward, Habit, PleasantHabit, UsefulHabit, Periodicity
 
+
+class PeriodicitySerializer(serializers.ModelSerializer):
+    """Периодичность"""
+    class Meta:
+        model = Periodicity
+        fields = '__all__'
 
 class LocationSerializer(serializers.ModelSerializer):
     """Сериализатор местоположения"""

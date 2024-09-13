@@ -5,10 +5,22 @@ from rest_framework import generics
 from rest_framework.exceptions import ValidationError
 from rest_framework.viewsets import ModelViewSet
 
-from habit.models import Location, Action, Reward, Habit, PleasantHabit, UsefulHabit
+from habit.models import Location, Action, Reward, Habit, PleasantHabit, UsefulHabit, Periodicity
 from habit.serializers import LocationSerializer, ActionSerializer, RewardSerializer, HabitSerializer, \
-    PleasantHabitSerializer, UsefulHabitSerializer
+    PleasantHabitSerializer, UsefulHabitSerializer, PeriodicitySerializer
 
+
+# ---PERIODICITY---
+class PeriodicityListAPIView(generics.ListAPIView):
+    serializer_class = PeriodicitySerializer
+    queryset = Periodicity.objects.all()
+
+class PeriodicityCreateAPIView(generics.CreateAPIView):
+    serializer_class = PeriodicitySerializer
+
+class PeriodicityDestroyAPIView(generics.DestroyAPIView):
+    serializer_class = PeriodicitySerializer
+    queryset = Periodicity.objects.all()
 
 # ---LOCATION---
 class LocationListAPIView(generics.ListAPIView):

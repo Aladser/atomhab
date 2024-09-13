@@ -18,6 +18,16 @@ class Periodicity(TruncateTableMixin, models.Model):
         verbose_name_plural = "Периодичности"
         ordering = ("pk",)
 
+    def clean(self):
+        print(self.interval)
+        # Валидация периодичности - не больше 1 недели
+        if self.interval > 60*60*24*7:
+            raise ValidationError("Интервал периодичности не должен превышать одну неделю")
+
+    def save(self,*args,force_insert=False,force_update=False,using=None,update_fields=None):
+        self.full_clean()
+        super().save(*args,force_insert,force_update,using,update_fields)
+
     def __str__(self):
         return self.name
 
