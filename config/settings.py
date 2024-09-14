@@ -151,11 +151,11 @@ CELERY_BEAT_SCHEDULE = {
 }
 
 CORS_ALLOWED_ORIGINS = [
-    'http://localhost:8000',  # Замените на адрес вашего фронтенд-сервера
+    os.getenv('SITE_ADDR'),  # Замените на адрес вашего фронтенд-сервера
 ]
 
 CSRF_TRUSTED_ORIGINS = [
-    'http://localhost:8000', #  Замените на адрес вашего фронтенд-сервера
+    os.getenv('SITE_ADDR'),  #  Замените на адрес вашего фронтенд-сервера
     # и добавьте адрес бэкенд-сервера
 ]
 

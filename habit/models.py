@@ -20,7 +20,6 @@ class Periodicity(TruncateTableMixin, models.Model):
         ordering = ("pk",)
 
     def clean(self):
-        print(self.interval)
         # Валидация периодичности - не больше 1 недели
         if self.interval > 60*60*24*7:
             raise ValidationError("Интервал периодичности не должен превышать одну неделю")
@@ -37,7 +36,6 @@ class Location(TruncateTableMixin, models.Model):
     """Местоположение"""
 
     name = models.CharField(verbose_name="Название", max_length=255, unique=True)
-    description = models.TextField(verbose_name="Комментарии", **NULLABLE)
 
     class Meta:
         verbose_name = "Место"
@@ -52,8 +50,7 @@ class Action(TruncateTableMixin, models.Model):
     """Действие"""
 
     name = models.CharField(verbose_name="Название", max_length=100)
-    is_pleasant = models.BooleanField(verbose_name="Приятное", default=False)
-    description = models.TextField(verbose_name="Объяснение", **NULLABLE)
+    is_pleasant = models.BooleanField(verbose_name="Признак приятного действия", default=False)
 
     class Meta:
         verbose_name = "Действие"
@@ -69,7 +66,6 @@ class Reward(TruncateTableMixin, models.Model):
     """Вознаграждение"""
 
     name = models.CharField(verbose_name="Название", max_length=100, unique=True)
-    description = models.TextField(verbose_name="Объяснение", **NULLABLE)
 
     class Meta:
         verbose_name = "Вознаграждение"
@@ -158,7 +154,7 @@ class PleasantHabit(TruncateTableMixin, ManualModelSavingMixin, models.Model):
             raise ValidationError("Вы не можете использовать эту приятную привычку, так как не являетесь автором, и привычка не общем доступе")
 
     def __str__(self):
-        return self.habit
+        return str(self.habit)
 
 # ПОЛЕЗНАЯ ПРИВЫЧКА
 class UsefulHabit(TruncateTableMixin, ManualModelSavingMixin, models.Model):
