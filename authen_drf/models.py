@@ -8,6 +8,7 @@ from libs.truncate_table_mixin import TruncateTableMixin
 class User(TruncateTableMixin, AbstractUser):
     username = None
     email = models.EmailField(verbose_name='почта', unique=True)
+    tg_chat_id = models.CharField(verbose_name="ID телеграм чата", **NULLABLE, max_length=100)
 
     phone = models.CharField(verbose_name='телефон', unique=True, max_length=20, **NULLABLE)
     avatar = models.ImageField(verbose_name='аватар', upload_to='images/users', **NULLABLE)

@@ -18,9 +18,14 @@ def check_habit_time():
     nearest_habits_list = list(Habit.objects.filter(time__gt=now_time_start, time__lt=now_time_end))
     useful_habits_list = UsefulHabit.objects.filter(habit__in=nearest_habits_list)
     pleasant_habits_list = PleasantHabit.objects.filter(habit__in=nearest_habits_list)
-    nearest_active_habits_list = list(useful_habits_list)
 
-    [nearest_active_habits_list.append(habit) for habit in pleasant_habits_list]
-    return '\n'+'\n'.join([str(habit) for habit in nearest_active_habits_list])
+    sending_list = []
+    for habit in useful_habits_list:
+        row = f"ID телеграм чата {habit.user.tg_chat_id}: {habit.habit.action} в {habit.habit.time} в {habit.habit.location}"
+        sending_list.append(row)
+    for habit in pleasant_habits_list:
+        row = f"ID телеграм чата {habit.user.tg_chat_id}: {habit.habit.action} в {habit.habit.time} в {habit.habit.location}"
+        sending_list.append(row)
+    return '\n'+'\n'.join(sending_list)
 
 
