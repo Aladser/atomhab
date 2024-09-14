@@ -138,10 +138,11 @@ CELERY_RESULT_BACKEND = os.getenv("CELERY_URL")
 CELERY_TIMEZONE = TIME_ZONE
 CELERY_TASK_TRACK_STARTED = True
 CELERY_TASK_TIME_LIMIT = 30 * 60
+
 CELERY_BEAT_SCHEDULE = {
     'check_habit_time': {
         'task': 'habit.tasks.check_habit_time',
-        'schedule': timedelta(seconds = 30),
+        'schedule': timedelta(hours = 1),
         'start_time': datetime.now(pytz.timezone(TIME_ZONE))
     },
 }
