@@ -2,6 +2,7 @@ import datetime
 
 from django.core.exceptions import ValidationError
 from rest_framework import generics, exceptions
+from rest_framework.permissions import AllowAny
 from rest_framework.viewsets import ModelViewSet
 
 from habit.models import Location, Action, Reward, Habit, PleasantHabit, UsefulHabit, Periodicity
@@ -26,6 +27,7 @@ class PeriodicityDestroyAPIView(generics.DestroyAPIView):
 class LocationListAPIView(generics.ListAPIView):
     serializer_class = LocationSerializer
     queryset = Location.objects.all()
+
 class LocationCreateAPIView(generics.CreateAPIView):
     serializer_class = LocationSerializer
 class LocationDestroyAPIView(generics.DestroyAPIView):
@@ -59,6 +61,7 @@ class RewardDestroyAPIView(generics.DestroyAPIView):
 class PublicHabitListAPIView(generics.ListAPIView):
     serializer_class = HabitSerializer
     queryset = Habit.objects.filter(is_publiс=True)
+    permission_classes = (AllowAny,)
 
 
 # --- Привычка ---
