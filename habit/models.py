@@ -124,7 +124,7 @@ class Habit(TruncateTableMixin, ManualModelSavingMixin, models.Model):
         ordering = ("pk",)
 
     def __str__(self):
-        return f"{self.action} в {self.time} в {self.location}"
+        return f"{self.action} в {str(self.time)[:8]} в {self.location}"
 
 # ПРИЯТНАЯ ПРИВЫЧКА
 class PleasantHabit(TruncateTableMixin, ManualModelSavingMixin, models.Model):
@@ -158,7 +158,7 @@ class PleasantHabit(TruncateTableMixin, ManualModelSavingMixin, models.Model):
             raise ValidationError("Вы не можете использовать эту приятную привычку, так как не являетесь автором, и привычка не общем доступе")
 
     def __str__(self):
-        return f"{self.user} - {self.habit}"
+        return self.habit
 
 # ПОЛЕЗНАЯ ПРИВЫЧКА
 class UsefulHabit(TruncateTableMixin, ManualModelSavingMixin, models.Model):
@@ -211,7 +211,7 @@ class UsefulHabit(TruncateTableMixin, ManualModelSavingMixin, models.Model):
 
     def __str__(self):
         if self.pleasant_habit is None:
-            return f"{self.user} - {self.habit} (награда - {self.reward})"
+            return f"{self.habit} (награда - {self.reward})"
         else:
-            return f"{self.user} - {self.habit} (награда - {self.pleasant_habit.name})"
+            return f"{self.habit} (награда - {self.pleasant_habit.name})"
 
