@@ -12,7 +12,7 @@ router.register(r'pleasant-habit', PleasantHabitViewSet, 'pleasant-habit')
 router.register(r'useful-habit', UsefulHabitViewSet, 'useful-habit')
 
 urlpatterns = [
-    path('public-habit/', PublicHabitListAPIView.as_view(), name='public-habit-list'),
+    path('public-habit/', PublicHabitListAPIView.as_view(), name='public-habit'),
 
     path('periodicity/', PeriodicityListAPIView.as_view(), name='periodicity-list'),
     path('periodicity/create/', PeriodicityCreateAPIView.as_view(), name='periodicity-create'),

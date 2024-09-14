@@ -2,9 +2,10 @@ import datetime
 
 from django.core.exceptions import ValidationError
 from rest_framework import generics, exceptions
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
 
+from authen_drf.permissions import IsSuperUserPermission
 from habit.models import Location, Action, Reward, Habit, PleasantHabit, UsefulHabit, Periodicity
 from habit.paginators import ManualPagination
 from habit.serializers import LocationSerializer, ActionSerializer, RewardSerializer, HabitSerializer, \
@@ -16,45 +17,64 @@ from libs.author_viewset_mixin import AuthorViewsetMixin
 class PeriodicityListAPIView(generics.ListAPIView):
     serializer_class = PeriodicitySerializer
     queryset = Periodicity.objects.all()
+    permission_classes = (IsSuperUserPermission,)
+
 class PeriodicityCreateAPIView(generics.CreateAPIView):
     serializer_class = PeriodicitySerializer
+    permission_classes = (IsSuperUserPermission,)
+
 class PeriodicityDestroyAPIView(generics.DestroyAPIView):
     serializer_class = PeriodicitySerializer
     queryset = Periodicity.objects.all()
+    permission_classes = (IsSuperUserPermission,)
 
 
 # ---Место---
 class LocationListAPIView(generics.ListAPIView):
     serializer_class = LocationSerializer
     queryset = Location.objects.all()
+    permission_classes = (IsSuperUserPermission,)
 
 class LocationCreateAPIView(generics.CreateAPIView):
     serializer_class = LocationSerializer
+    permission_classes = (IsSuperUserPermission,)
+
 class LocationDestroyAPIView(generics.DestroyAPIView):
     serializer_class = LocationSerializer
     queryset = Location.objects.all()
+    permission_classes = (IsSuperUserPermission,)
 
 
 # ---Действие---
 class ActionListAPIView(generics.ListAPIView):
     serializer_class = ActionSerializer
     queryset = Action.objects.all()
+    permission_classes = (IsSuperUserPermission,)
+
 class ActionCreateAPIView(generics.CreateAPIView):
     serializer_class = ActionSerializer
+    permission_classes = (IsSuperUserPermission,)
+
 class ActionDestroyAPIView(generics.DestroyAPIView):
     serializer_class = ActionSerializer
     queryset = Action.objects.all()
+    permission_classes = (IsSuperUserPermission,)
 
 
 # ---Вознаграждение---
 class RewardListAPIView(generics.ListAPIView):
     serializer_class = RewardSerializer
     queryset = Reward.objects.all()
+    permission_classes = (IsSuperUserPermission,)
+
 class RewardCreateAPIView(generics.CreateAPIView):
     serializer_class = RewardSerializer
+    permission_classes = (IsSuperUserPermission,)
+
 class RewardDestroyAPIView(generics.DestroyAPIView):
     serializer_class = RewardSerializer
     queryset = Reward.objects.all()
+    permission_classes = (IsSuperUserPermission,)
 
 
 # --- Публичные привычки ---
