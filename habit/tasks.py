@@ -5,6 +5,8 @@ from celery import shared_task
 
 
 from habit.models import UsefulHabit, Habit, PleasantHabit
+from libs.get_current_hour_time import get_current_hour_time
+
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 
 @shared_task
@@ -14,9 +16,8 @@ def check_habit_time():
     """
 
     now_datetime = datetime.datetime.now()
-    now_time = now_datetime.time()
-    now_time_start = datetime.time(hour=now_time.hour, minute=0)
-    now_time_end = datetime.time(hour=now_time.hour+1, minute=0)
+    now_time_start = get_current_hour_time()
+    now_time_end = get_current_hour_time(1)
 
     nearest_habits_list = list(Habit.objects.filter(time__gt=now_time_start, time__lt=now_time_end))
     useful_habits_list = UsefulHabit.objects.filter(habit__in=nearest_habits_list)
@@ -28,7 +29,7 @@ def check_habit_time():
     fill_sending_list(pleasant_habits_list, sending_list, chat_list, "Приятная привычка")
 
     if len(sending_list) > 0:
-        [send_message.delay(chat, f"{str(now_datetime)[:16]} Напоминания по привычках") for chat in chat_list]
+        [send_message.delay(chat, f"{str(now_datetime)[:16]} Напоминания о ближайших привычках") for chat in chat_list]
         [send_message.delay(sending["chat_id"], sending["text"]) for sending in sending_list]
     return '\n' + '\n'.join([sending["text"] for sending in sending_list])
 
