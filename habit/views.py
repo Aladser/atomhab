@@ -60,6 +60,7 @@ class PublicHabitListAPIView(generics.ListAPIView):
     serializer_class = HabitSerializer
     queryset = Habit.objects.filter(is_publiс=True)
 
+
 # --- Привычка ---
 class HabitViewSet(AuthorViewsetMixin, ModelViewSet):
     serializer_class = HabitSerializer
