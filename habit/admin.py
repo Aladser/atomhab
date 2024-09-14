@@ -29,8 +29,8 @@ class HabitAdmin(admin.ModelAdmin):
 
 @admin.register(PleasantHabit)
 class PleasantHabit(admin.ModelAdmin):
-    list_display = ('pk', 'author', 'habit')
+    list_display = ('pk', 'user', 'habit')
 
 @admin.register(UsefulHabit)
 class UsefulHabit(admin.ModelAdmin):
-    list_display = ('pk', 'author', 'habit', 'pleasant_habit', 'reward')
+    list_display = ('pk', 'user', 'habit', 'pleasant_habit', 'reward')

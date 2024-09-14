@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.core.management import BaseCommand
 from django.shortcuts import get_object_or_404
 
@@ -68,27 +70,28 @@ class Command(BaseCommand):
             get_object_or_404(User, email=user_3_email)
         ]
 
+        now_time = datetime.now().time()
         habit_param_obj_list = [
-            {'location': place_1, 'action': pleasant_action_1, 'periodicity': hour_period, 'author':userlist[0],'is_publiс':True},
-            {'location': place_2, 'action': pleasant_action_2, 'periodicity': day_period, 'author':userlist[1]},
-            {'location': place_3, 'action': pleasant_action_3, 'periodicity': week_period, 'author':userlist[2]},
-            {'location':place_1, 'action': useful_action_1, 'periodicity': hour_period, 'author':userlist[0]},
-            {'location': place_2, 'action': useful_action_2, 'periodicity': day_period, 'author':userlist[1],'is_publiс':True},
-            {'location': place_3, 'action': useful_action_3, 'periodicity': week_period, 'author':userlist[2],'is_publiс':True},
+            {'location': place_1, 'action': pleasant_action_1, 'periodicity': hour_period, 'author':userlist[0], 'time':now_time, 'is_publiс':True},
+            {'location': place_2, 'action': pleasant_action_2, 'periodicity': day_period, 'author':userlist[1], 'time':now_time},
+            {'location': place_3, 'action': pleasant_action_3, 'periodicity': week_period, 'author':userlist[2], 'time':now_time},
+            {'location':place_1, 'action': useful_action_1, 'periodicity': hour_period, 'author':userlist[0], 'time':now_time},
+            {'location': place_2, 'action': useful_action_2, 'periodicity': day_period, 'author':userlist[1], 'time':now_time, 'is_publiс':True},
+            {'location': place_3, 'action': useful_action_3, 'periodicity': week_period, 'author':userlist[2], 'time':now_time, 'is_publiс':True},
         ]
         Seeding.seed_table(Habit, habit_param_obj_list)
 
         pleasant_habits_param_obj_list = [
-            {'habit': get_object_or_404(Habit, pk=1), 'author':userlist[0]},
-            {'habit': get_object_or_404(Habit, pk=2), 'author':userlist[1]},
-            {'habit': get_object_or_404(Habit, pk=3), 'author':userlist[2]}
+            {'habit': get_object_or_404(Habit, pk=1), 'user':userlist[0]},
+            {'habit': get_object_or_404(Habit, pk=2), 'user':userlist[1]},
+            {'habit': get_object_or_404(Habit, pk=3), 'user':userlist[2]}
         ]
         Seeding.seed_table(PleasantHabit, pleasant_habits_param_obj_list)
         reward =get_object_or_404(Reward, name=reward_param_obj_list[0]['name'])
 
         useful_habits_param_obj_list = [
-            {'habit': get_object_or_404(Habit, pk=4), 'author':userlist[0]},
-            {'habit': get_object_or_404(Habit, pk=5), 'author':userlist[1]},
-            {'habit': get_object_or_404(Habit, pk=6), 'author':userlist[2]}
+            {'habit': get_object_or_404(Habit, pk=4), 'user':userlist[0]},
+            {'habit': get_object_or_404(Habit, pk=5), 'user':userlist[1]},
+            {'habit': get_object_or_404(Habit, pk=6), 'user':userlist[2]}
         ]
         Seeding.seed_table(UsefulHabit, useful_habits_param_obj_list)
