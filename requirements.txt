@@ -11,4 +11,5 @@ pytz==2024.1
 redis==5.0.8
 requests==2.32.3
 django-cors-headers==4.4.0
+setuptools==74.1.2
 
