@@ -1,9 +1,12 @@
 import datetime
+import os, requests
 
 from celery import shared_task
 
-from habit.models import UsefulHabit, Habit, PleasantHabit
 
+from habit.models import UsefulHabit, Habit, PleasantHabit
+TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
+TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 
 @shared_task
 def check_habit_time():
@@ -21,11 +24,32 @@ def check_habit_time():
 
     sending_list = []
     for habit in useful_habits_list:
-        row = f"ID телеграм чата {habit.user.tg_chat_id}: {habit.habit.action} в {habit.habit.time} в {habit.habit.location}"
-        sending_list.append(row)
+        obj = {
+            "row": f"ID телеграм чата {habit.user.tg_chat_id}: {habit.habit.action} в {habit.habit.time} в {habit.habit.location}",
+            "habit": str(habit)
+        }
+        sending_list.append(obj)
     for habit in pleasant_habits_list:
-        row = f"ID телеграм чата {habit.user.tg_chat_id}: {habit.habit.action} в {habit.habit.time} в {habit.habit.location}"
-        sending_list.append(row)
-    return '\n'+'\n'.join(sending_list)
+        obj = {
+            "row": f"ID телеграм чата {habit.user.tg_chat_id}: {habit.habit.action} в {habit.habit.time} в {habit.habit.location}",
+            "habit": habit
+        }
+        sending_list.append(obj)
+
+    if len(sending_list) > 0:
+            [send_message.delay(str(sending["habit"])) for sending in sending_list]
+    return '\n' + '\n'.join([sending["row"] for sending in sending_list])
 
 
+@shared_task
+def send_message(text):
+    """Отправляет отложенно сообщение в телеграм """
+
+    params = {
+        "chat_id": TELEGRAM_CHAT_ID,
+        "text": text
+    }
+    response = requests.get(f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage", params=params)
+
+    print(response.__dict__['url'])
+    print(response.__dict__['_content'])

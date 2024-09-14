@@ -141,7 +141,7 @@ CELERY_TASK_TIME_LIMIT = 30 * 60
 CELERY_BEAT_SCHEDULE = {
     'check_habit_time': {
         'task': 'habit.tasks.check_habit_time',
-        'schedule': timedelta(seconds = 10),
+        'schedule': timedelta(seconds = 30),
         'start_time': datetime.now(pytz.timezone(TIME_ZONE))
     },
 }
