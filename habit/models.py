@@ -6,6 +6,7 @@ from config.settings import NULLABLE
 from libs.manual_model_saving_mixin import ManualModelSavingMixin
 from libs.truncate_table_mixin import TruncateTableMixin
 
+NO_AUTHOR_ERROR = "Вы не можете использовать эту приятную привычку, так как не являетесь автором, и привычка не общем доступе"
 
 # ПЕРИОДИЧНОСТЬ
 class Periodicity(TruncateTableMixin, models.Model):
@@ -20,7 +21,6 @@ class Periodicity(TruncateTableMixin, models.Model):
         ordering = ("pk",)
 
     def clean(self):
-        print(self.interval)
         # Валидация периодичности - не больше 1 недели
         if self.interval > 60*60*24*7:
             raise ValidationError("Интервал периодичности не должен превышать одну неделю")
@@ -37,7 +37,6 @@ class Location(TruncateTableMixin, models.Model):
     """Местоположение"""
 
     name = models.CharField(verbose_name="Название", max_length=255, unique=True)
-    description = models.TextField(verbose_name="Комментарии", **NULLABLE)
 
     class Meta:
         verbose_name = "Место"
@@ -52,8 +51,7 @@ class Action(TruncateTableMixin, models.Model):
     """Действие"""
 
     name = models.CharField(verbose_name="Название", max_length=100)
-    is_pleasant = models.BooleanField(verbose_name="Приятное", default=False)
-    description = models.TextField(verbose_name="Объяснение", **NULLABLE)
+    is_pleasant = models.BooleanField(verbose_name="Признак приятного действия", default=False)
 
     class Meta:
         verbose_name = "Действие"
@@ -69,7 +67,6 @@ class Reward(TruncateTableMixin, models.Model):
     """Вознаграждение"""
 
     name = models.CharField(verbose_name="Название", max_length=100, unique=True)
-    description = models.TextField(verbose_name="Объяснение", **NULLABLE)
 
     class Meta:
         verbose_name = "Вознаграждение"
@@ -155,10 +152,10 @@ class PleasantHabit(TruncateTableMixin, ManualModelSavingMixin, models.Model):
             raise ValidationError("Действие привычки не является приятным")
         # Валидация разрешения пользователя использовать указанную привычку
         if not self.user.is_superuser and self.habit.author != self.user and not self.habit.is_publiс:
-            raise ValidationError("Вы не можете использовать эту приятную привычку, так как не являетесь автором, и привычка не общем доступе")
+            raise ValidationError(NO_AUTHOR_ERROR)
 
     def __str__(self):
-        return self.habit
+        return str(self.habit)
 
 # ПОЛЕЗНАЯ ПРИВЫЧКА
 class UsefulHabit(TruncateTableMixin, ManualModelSavingMixin, models.Model):
@@ -201,7 +198,7 @@ class UsefulHabit(TruncateTableMixin, ManualModelSavingMixin, models.Model):
             raise ValidationError("Должна быть заполнена связанная приятная привычка или вознаграждение, но не одновременно")
         # Валидация разрешения пользователя использовать указанную привычку
         if not self.user.is_superuser and self.habit.author != self.user and not self.habit.is_publiс:
-                raise ValidationError("Вы не можете использовать эту полезную привычку, так как не являетесь автором, и привычка не общем доступе")
+                raise ValidationError(NO_AUTHOR_ERROR)
 
     class Meta:
         verbose_name = "Полезная привычка"
@@ -210,8 +207,5 @@ class UsefulHabit(TruncateTableMixin, ManualModelSavingMixin, models.Model):
         unique_together = ('user', 'habit')
 
     def __str__(self):
-        if self.pleasant_habit is None:
-            return f"{self.habit} (награда - {self.reward})"
-        else:
-            return f"{self.habit} (награда - {self.pleasant_habit.name})"
+        return f"{self.habit} (награда - " + str(self.reward) if self.pleasant_habit is None else str(self.pleasant_habit)
 

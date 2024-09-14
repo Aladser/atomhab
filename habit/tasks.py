@@ -2,8 +2,6 @@ import datetime
 import os, requests
 
 from celery import shared_task
-
-
 from habit.models import UsefulHabit, Habit, PleasantHabit
 from libs.get_current_hour_time import get_current_hour_time
 
@@ -29,7 +27,7 @@ def check_habit_time():
     fill_sending_list(pleasant_habits_list, sending_list, chat_list, "Приятная привычка")
 
     if len(sending_list) > 0:
-        [send_message.delay(chat, f"{str(now_datetime)[:16]} Напоминания о ближайших привычках") for chat in chat_list]
+        [send_message.delay(chat, f"{str(now_datetime)[:16]} Напоминаю о ближайших привычках:") for chat in chat_list]
         [send_message.delay(sending["chat_id"], sending["text"]) for sending in sending_list]
     return '\n' + '\n'.join([sending["text"] for sending in sending_list])
 

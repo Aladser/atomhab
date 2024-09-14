@@ -87,11 +87,13 @@ class Command(BaseCommand):
             {'habit': get_object_or_404(Habit, pk=3), 'user':userlist[2]}
         ]
         Seeding.seed_table(PleasantHabit, pleasant_habits_param_obj_list)
-        reward =get_object_or_404(Reward, name=reward_param_obj_list[0]['name'])
 
+        reward = get_object_or_404(Reward, name=reward_param_obj_list[0]['name'])
+        pleasant_habit_1 = get_object_or_404(PleasantHabit, id=1)
+        pleasant_habit_2 = get_object_or_404(PleasantHabit, id=2)
         useful_habits_param_obj_list = [
-            {'habit': get_object_or_404(Habit, pk=4), 'user':userlist[0]},
-            {'habit': get_object_or_404(Habit, pk=5), 'user':userlist[1]},
-            {'habit': get_object_or_404(Habit, pk=6), 'user':userlist[2]}
+            {'habit': get_object_or_404(Habit, pk=4), 'user':userlist[0], 'reward':reward},
+            {'habit': get_object_or_404(Habit, pk=5), 'user':userlist[1], 'pleasant_habit':pleasant_habit_1},
+            {'habit': get_object_or_404(Habit, pk=6), 'user':userlist[2], 'pleasant_habit':pleasant_habit_2}
         ]
         Seeding.seed_table(UsefulHabit, useful_habits_param_obj_list)
