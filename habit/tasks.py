@@ -2,8 +2,6 @@ import datetime
 import os, requests
 
 from celery import shared_task
-
-
 from habit.models import UsefulHabit, Habit, PleasantHabit
 from libs.get_current_hour_time import get_current_hour_time
 

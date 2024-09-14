@@ -6,6 +6,7 @@ from config.settings import NULLABLE
 from libs.manual_model_saving_mixin import ManualModelSavingMixin
 from libs.truncate_table_mixin import TruncateTableMixin
 
+NO_AUTHOR_ERROR = "Вы не можете использовать эту приятную привычку, так как не являетесь автором, и привычка не общем доступе"
 
 # ПЕРИОДИЧНОСТЬ
 class Periodicity(TruncateTableMixin, models.Model):
@@ -151,7 +152,7 @@ class PleasantHabit(TruncateTableMixin, ManualModelSavingMixin, models.Model):
             raise ValidationError("Действие привычки не является приятным")
         # Валидация разрешения пользователя использовать указанную привычку
         if not self.user.is_superuser and self.habit.author != self.user and not self.habit.is_publiс:
-            raise ValidationError("Вы не можете использовать эту приятную привычку, так как не являетесь автором, и привычка не общем доступе")
+            raise ValidationError(NO_AUTHOR_ERROR)
 
     def __str__(self):
         return str(self.habit)
@@ -197,7 +198,7 @@ class UsefulHabit(TruncateTableMixin, ManualModelSavingMixin, models.Model):
             raise ValidationError("Должна быть заполнена связанная приятная привычка или вознаграждение, но не одновременно")
         # Валидация разрешения пользователя использовать указанную привычку
         if not self.user.is_superuser and self.habit.author != self.user and not self.habit.is_publiс:
-                raise ValidationError("Вы не можете использовать эту полезную привычку, так как не являетесь автором, и привычка не общем доступе")
+                raise ValidationError(NO_AUTHOR_ERROR)
 
     class Meta:
         verbose_name = "Полезная привычка"
@@ -206,8 +207,5 @@ class UsefulHabit(TruncateTableMixin, ManualModelSavingMixin, models.Model):
         unique_together = ('user', 'habit')
 
     def __str__(self):
-        if self.pleasant_habit is None:
-            return f"{self.habit} (награда - {self.reward})"
-        else:
-            return f"{self.habit} (награда - {self.pleasant_habit.name})"
+        return f"{self.habit} (награда - " + str(self.reward) if self.pleasant_habit is None else str(self.pleasant_habit)
 
