@@ -2,7 +2,10 @@ from django.urls import path
 from rest_framework.routers import DefaultRouter
 
 from habit.apps import HabitConfig
-from habit.views import *
+from habit.views import HabitViewSet, UsefulHabitViewSet, PleasantHabitViewSet, PeriodicityListAPIView, \
+    PeriodicityCreateAPIView, PeriodicityDestroyAPIView, LocationListAPIView, LocationCreateAPIView, \
+    LocationDestroyAPIView, ActionListAPIView, ActionCreateAPIView, ActionDestroyAPIView, RewardListAPIView, \
+    RewardCreateAPIView, RewardDestroyAPIView, PublicHabitListAPIView
 
 app_name = HabitConfig.name
 
@@ -12,8 +15,6 @@ router.register(r'pleasant-habit', PleasantHabitViewSet, 'pleasant-habit')
 router.register(r'useful-habit', UsefulHabitViewSet, 'useful-habit')
 
 urlpatterns = [
-    path('public-habit/', PublicHabitListAPIView.as_view(), name='public-habit'),
-
     path('periodicity/', PeriodicityListAPIView.as_view(), name='periodicity-list'),
     path('periodicity/create/', PeriodicityCreateAPIView.as_view(), name='periodicity-create'),
     path('periodicity/<int:pk>/delete', PeriodicityDestroyAPIView.as_view(), name='periodicity-delete'),
@@ -29,4 +30,6 @@ urlpatterns = [
     path('reward/', RewardListAPIView.as_view(), name='reward-list'),
     path('reward/create/', RewardCreateAPIView.as_view(), name='reward-create'),
     path('reward/<int:pk>/delete', RewardDestroyAPIView.as_view(), name='reward-delete'),
-]  + router.urls
+
+    path('public-habit/', PublicHabitListAPIView.as_view(), name='public-habit'),
+] + router.urls

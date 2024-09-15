@@ -6,7 +6,9 @@ from config.settings import NULLABLE
 from libs.manual_model_saving_mixin import ManualModelSavingMixin
 from libs.truncate_table_mixin import TruncateTableMixin
 
-NO_AUTHOR_ERROR = "Вы не можете использовать эту приятную привычку, так как не являетесь автором, и привычка не общем доступе"
+NO_AUTHOR_ERROR = ("Вы не можете использовать эту привычку, так как не являетесь автором,"
+                   " и привычка не общем доступе")
+
 
 # ПЕРИОДИЧНОСТЬ
 class Periodicity(TruncateTableMixin, models.Model):
@@ -22,15 +24,16 @@ class Periodicity(TruncateTableMixin, models.Model):
 
     def clean(self):
         # Валидация периодичности - не больше 1 недели
-        if self.interval > 60*60*24*7:
+        if self.interval > 60 * 60 * 24 * 7:
             raise ValidationError("Интервал периодичности не должен превышать одну неделю")
 
-    def save(self,*args,force_insert=False,force_update=False,using=None,update_fields=None):
+    def save(self, *args, force_insert=False, force_update=False, using=None, update_fields=None):
         self.full_clean()
-        super().save(*args,force_insert,force_update,using,update_fields)
+        super().save(*args, force_insert, force_update, using, update_fields)
 
     def __str__(self):
         return self.name
+
 
 # МЕСТОПОЛОЖЕНИЕ
 class Location(TruncateTableMixin, models.Model):
@@ -46,10 +49,12 @@ class Location(TruncateTableMixin, models.Model):
     def __str__(self):
         return self.name
 
+
 # ДЕЙСТВИЕ
 class Action(TruncateTableMixin, models.Model):
     """Действие"""
 
+    # уникальное сочетание имени и признака приятного действия
     name = models.CharField(verbose_name="Название", max_length=100)
     is_pleasant = models.BooleanField(verbose_name="Признак приятного действия", default=False)
 
@@ -61,6 +66,7 @@ class Action(TruncateTableMixin, models.Model):
 
     def __str__(self):
         return f"Приятно {self.name}" if self.is_pleasant else f"Полезно {self.name}"
+
 
 # ВОЗНАГРАЖДЕНИЕ
 class Reward(TruncateTableMixin, models.Model):
@@ -75,6 +81,7 @@ class Reward(TruncateTableMixin, models.Model):
 
     def __str__(self):
         return self.name
+
 
 # ПРИВЫЧКА
 class Habit(TruncateTableMixin, ManualModelSavingMixin, models.Model):
@@ -123,6 +130,7 @@ class Habit(TruncateTableMixin, ManualModelSavingMixin, models.Model):
     def __str__(self):
         return f"{self.action} в {str(self.time)[:8]} в {self.location}"
 
+
 # ПРИЯТНАЯ ПРИВЫЧКА
 class PleasantHabit(TruncateTableMixin, ManualModelSavingMixin, models.Model):
     """Приятная привычка"""
@@ -156,6 +164,7 @@ class PleasantHabit(TruncateTableMixin, ManualModelSavingMixin, models.Model):
 
     def __str__(self):
         return str(self.habit)
+
 
 # ПОЛЕЗНАЯ ПРИВЫЧКА
 class UsefulHabit(TruncateTableMixin, ManualModelSavingMixin, models.Model):
@@ -194,11 +203,13 @@ class UsefulHabit(TruncateTableMixin, ManualModelSavingMixin, models.Model):
         if self.habit.action.is_pleasant:
             raise ValidationError("Действие привычки не является полезным")
         # Валидация указанного вознаграждения: полезная привычка или вознаграждение
-        if self.pleasant_habit is None and self.reward is None or self.pleasant_habit is not None and self.reward is not None:
-            raise ValidationError("Должна быть заполнена связанная приятная привычка или вознаграждение, но не одновременно")
+        if (self.pleasant_habit is None and self.reward is None or
+                self.pleasant_habit is not None and self.reward is not None):
+            raise ValidationError(
+                "Должна быть заполнена связанная приятная привычка или вознаграждение, но не одновременно")
         # Валидация разрешения пользователя использовать указанную привычку
         if not self.user.is_superuser and self.habit.author != self.user and not self.habit.is_publiс:
-                raise ValidationError(NO_AUTHOR_ERROR)
+            raise ValidationError(NO_AUTHOR_ERROR)
 
     class Meta:
         verbose_name = "Полезная привычка"
@@ -207,5 +218,5 @@ class UsefulHabit(TruncateTableMixin, ManualModelSavingMixin, models.Model):
         unique_together = ('user', 'habit')
 
     def __str__(self):
-        return f"{self.habit} (награда - " + str(self.reward) if self.pleasant_habit is None else str(self.pleasant_habit)
-
+        return f"{self.habit} (награда - " + str(self.reward) if self.pleasant_habit is None else str(
+            self.pleasant_habit)

@@ -9,6 +9,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from authen_drf.models import User
 from authen_drf.serializers import UserListSerializer, UserDetailSerializer
 
+
 # LIST
 class UserListAPIView(generics.ListAPIView):
     serializer_class = UserListSerializer
@@ -58,4 +59,4 @@ class LoginView(TokenObtainPairView):
         authuser.last_login = datetime.now()
         authuser.save()
 
-        return  response
+        return response
