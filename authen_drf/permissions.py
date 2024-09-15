@@ -7,5 +7,5 @@ class IsAuthorPermission(permissions.BasePermission):
 
 class IsSuperUserPermission(permissions.BasePermission):
     def has_permission(self, request, view):
-        return False
+        return request.user.is_superuser
 

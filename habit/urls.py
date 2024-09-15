@@ -12,8 +12,6 @@ router.register(r'pleasant-habit', PleasantHabitViewSet, 'pleasant-habit')
 router.register(r'useful-habit', UsefulHabitViewSet, 'useful-habit')
 
 urlpatterns = [
-    path('public-habit/', PublicHabitListAPIView.as_view(), name='public-habit'),
-
     path('periodicity/', PeriodicityListAPIView.as_view(), name='periodicity-list'),
     path('periodicity/create/', PeriodicityCreateAPIView.as_view(), name='periodicity-create'),
     path('periodicity/<int:pk>/delete', PeriodicityDestroyAPIView.as_view(), name='periodicity-delete'),
@@ -29,4 +27,6 @@ urlpatterns = [
     path('reward/', RewardListAPIView.as_view(), name='reward-list'),
     path('reward/create/', RewardCreateAPIView.as_view(), name='reward-create'),
     path('reward/<int:pk>/delete', RewardDestroyAPIView.as_view(), name='reward-delete'),
+
+    path('public-habit/', PublicHabitListAPIView.as_view(), name='public-habit'),
 ]  + router.urls
