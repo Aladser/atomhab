@@ -4,7 +4,8 @@ from django.core.management import BaseCommand
 from django.shortcuts import get_object_or_404
 
 from authen_drf.management.commands.createusers import user_1_email, user_2_email, user_3_email
-from habit.models import *
+from authen_drf.models import User
+from habit.models import Periodicity, Location, Action, Reward, Habit, PleasantHabit, UsefulHabit
 from libs.seeding import Seeding
 
 location_param_obj_list = [
@@ -17,9 +18,9 @@ location_param_obj_list = [
 ]
 
 action_param_obj_list = [
-    {'name': 'петь', 'is_pleasant':True},
-    {'name': 'играть', 'is_pleasant':True},
-    {'name': 'танцевать', 'is_pleasant':True},
+    {'name': 'петь', 'is_pleasant': True},
+    {'name': 'играть', 'is_pleasant': True},
+    {'name': 'танцевать', 'is_pleasant': True},
     {'name': 'бегать'},
     {'name': 'учиться'},
     {'name': 'отжиматься'},
@@ -34,7 +35,7 @@ reward_param_obj_list = [
 ]
 
 periodicity_param_obj_list = [
-    {'name':'1 час', 'interval': 60 * 60},
+    {'name': '1 час', 'interval': 60 * 60},
     {'name': '6 часов', 'interval': 60 * 60 * 6},
     {'name': '12 часов', 'interval': 60 * 60 * 12},
     {'name': '1 день', 'interval': 60 * 60 * 24},
@@ -42,9 +43,11 @@ periodicity_param_obj_list = [
     {'name': '1 неделя', 'interval': 60 * 60 * 24 * 7},
 ]
 
+
 class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         seed_db_tables()
+
 
 def seed_db_tables():
     Seeding.seed_table(Periodicity, periodicity_param_obj_list)

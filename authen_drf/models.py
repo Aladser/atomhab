@@ -4,6 +4,7 @@ from django.db import models
 from config.settings import NULLABLE
 from libs.truncate_table_mixin import TruncateTableMixin
 
+
 # -----ПОЛЬЗОВАТЕЛЬ-----
 class User(TruncateTableMixin, AbstractUser):
     username = None

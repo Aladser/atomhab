@@ -2,7 +2,7 @@ import datetime
 
 from django.core.exceptions import ValidationError
 from rest_framework import generics, exceptions
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.permissions import AllowAny
 from rest_framework.viewsets import ModelViewSet
 
 from authen_drf.permissions import IsSuperUserPermission
@@ -19,9 +19,11 @@ class PeriodicityListAPIView(generics.ListAPIView):
     queryset = Periodicity.objects.all()
     permission_classes = (IsSuperUserPermission,)
 
+
 class PeriodicityCreateAPIView(generics.CreateAPIView):
     serializer_class = PeriodicitySerializer
     permission_classes = (IsSuperUserPermission,)
+
 
 class PeriodicityDestroyAPIView(generics.DestroyAPIView):
     serializer_class = PeriodicitySerializer
@@ -35,9 +37,11 @@ class LocationListAPIView(generics.ListAPIView):
     queryset = Location.objects.all()
     permission_classes = (IsSuperUserPermission,)
 
+
 class LocationCreateAPIView(generics.CreateAPIView):
     serializer_class = LocationSerializer
     permission_classes = (IsSuperUserPermission,)
+
 
 class LocationDestroyAPIView(generics.DestroyAPIView):
     serializer_class = LocationSerializer
@@ -51,9 +55,11 @@ class ActionListAPIView(generics.ListAPIView):
     queryset = Action.objects.all()
     permission_classes = (IsSuperUserPermission,)
 
+
 class ActionCreateAPIView(generics.CreateAPIView):
     serializer_class = ActionSerializer
     permission_classes = (IsSuperUserPermission,)
+
 
 class ActionDestroyAPIView(generics.DestroyAPIView):
     serializer_class = ActionSerializer
@@ -67,9 +73,11 @@ class RewardListAPIView(generics.ListAPIView):
     queryset = Reward.objects.all()
     permission_classes = (IsSuperUserPermission,)
 
+
 class RewardCreateAPIView(generics.CreateAPIView):
     serializer_class = RewardSerializer
     permission_classes = (IsSuperUserPermission,)
+
 
 class RewardDestroyAPIView(generics.DestroyAPIView):
     serializer_class = RewardSerializer
@@ -96,8 +104,9 @@ class HabitViewSet(AuthorViewsetMixin, ModelViewSet):
         habit.time = datetime.time(habit.time.hour, habit.time.minute)
         try:
             habit.save()
-        except ValidationError as e:
+        except ValidationError:
             raise exceptions.ValidationError(f"Привычка <<{habit}>> уже существует")
+
 
 # --- Приятная привычка ---
 class PleasantHabitViewSet(AuthorViewsetMixin, ModelViewSet):
@@ -105,12 +114,9 @@ class PleasantHabitViewSet(AuthorViewsetMixin, ModelViewSet):
     queryset = PleasantHabit.objects.all()
     pagination_class = ManualPagination
 
+
 # --- Полезная привычка ---
 class UsefulHabitViewSet(AuthorViewsetMixin, ModelViewSet):
     serializer_class = UsefulHabitSerializer
     queryset = UsefulHabit.objects.all()
     pagination_class = ManualPagination
-
-
-
-

@@ -2,7 +2,10 @@ from django.urls import path
 from rest_framework.routers import DefaultRouter
 
 from habit.apps import HabitConfig
-from habit.views import *
+from habit.views import HabitViewSet, UsefulHabitViewSet, PleasantHabitViewSet, PeriodicityListAPIView, \
+    PeriodicityCreateAPIView, PeriodicityDestroyAPIView, LocationListAPIView, LocationCreateAPIView, \
+    LocationDestroyAPIView, ActionListAPIView, ActionCreateAPIView, ActionDestroyAPIView, RewardListAPIView, \
+    RewardCreateAPIView, RewardDestroyAPIView, PublicHabitListAPIView
 
 app_name = HabitConfig.name
 
@@ -29,4 +32,4 @@ urlpatterns = [
     path('reward/<int:pk>/delete', RewardDestroyAPIView.as_view(), name='reward-delete'),
 
     path('public-habit/', PublicHabitListAPIView.as_view(), name='public-habit'),
-]  + router.urls
+] + router.urls

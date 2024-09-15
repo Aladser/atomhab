@@ -1,11 +1,13 @@
 import datetime
-import os, requests
+import os
+import requests
 
 from celery import shared_task
 from habit.models import UsefulHabit, Habit, PleasantHabit
 from libs.get_current_hour_time import get_current_hour_time
 
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
+
 
 @shared_task
 def check_habit_time():
@@ -44,6 +46,7 @@ def send_message(chat_id, text):
 
     print(response.__dict__['url'])
     print(response.__dict__['_content'])
+
 
 def fill_sending_list(habits_list, sending_list, chat_list, text):
     """Заполняет список рассылок уведомлений"""

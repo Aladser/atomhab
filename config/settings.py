@@ -95,7 +95,7 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
     'DEFAULT_PERMISSION_CLASSES': [
-       'rest_framework.permissions.IsAuthenticated',
+        'rest_framework.permissions.IsAuthenticated',
     ]
 }
 
@@ -122,7 +122,6 @@ STATICFILES_DIRS = [BASE_DIR / "static"]
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
-
 # ПОЧТА
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = os.getenv("EMAIL_HOST")
@@ -134,7 +133,6 @@ EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 SERVER_EMAIL = EMAIL_HOST_USER
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
-
 # CELERY
 CELERY_BROKER_URL = os.getenv("CELERY_URL")
 CELERY_RESULT_BACKEND = os.getenv("CELERY_URL")
@@ -145,7 +143,7 @@ CELERY_TASK_TIME_LIMIT = 30 * 60
 CELERY_BEAT_SCHEDULE = {
     'check_habit_time': {
         'task': 'habit.tasks.check_habit_time',
-        'schedule': timedelta(hours = 1),
+        'schedule': timedelta(hours=1),
         'start_time': datetime.now(pytz.timezone(TIME_ZONE))
     },
 }
@@ -155,7 +153,7 @@ CORS_ALLOWED_ORIGINS = [
 ]
 
 CSRF_TRUSTED_ORIGINS = [
-    os.getenv('SITE_ADDR'),  #  Замените на адрес вашего фронтенд-сервера
+    os.getenv('SITE_ADDR'),  # Замените на адрес вашего фронтенд-сервера
     # и добавьте адрес бэкенд-сервера
 ]
 

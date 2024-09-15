@@ -8,6 +8,7 @@ class UserDetailSerializer(serializers.ModelSerializer):
         model = User
         fields = ('id', 'email', 'first_name', 'last_name', 'is_staff', 'is_active', 'groups')
 
+
 class UserListSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
