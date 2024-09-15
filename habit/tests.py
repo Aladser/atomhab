@@ -10,7 +10,7 @@ from authen_drf.management.commands.createusers import password, user_obj_list
 from authen_drf.models import User
 from habit.management.commands.seed import periodicity_param_obj_list, location_param_obj_list, action_param_obj_list, \
     reward_param_obj_list, seed_db_tables
-from habit.models import Periodicity, Location, Action, Reward, Habit, PleasantHabit
+from habit.models import Periodicity, Location, Action, Reward, Habit, PleasantHabit, UsefulHabit
 from libs.seeding import Seeding
 
 """
@@ -159,3 +159,46 @@ class PleasantHabitTestCase(APITestCase):
             PleasantHabit.objects.create(**pleasant_habit_params)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+class UsefulHabitTestCase(APITestCase):
+    def setUp(self):
+        Seeding.seed_users(User, user_obj_list, password)
+        self.user = get_test_authuser()
+        self.client.force_authenticate(user=self.user)
+        seed_db_tables()
+
+    def test_list(self):
+        url = reverse('habit:useful-habit-list')
+        response = self.client.get(url)
+        habit_str = str(UsefulHabit.objects.get(pk=1))
+
+        # Нарушение валидации полезного действия
+        useful_habit_params = {'habit': get_object_or_404(Habit, pk=1), 'user': self.user}
+        with self.assertRaises(ValidationError):
+            UsefulHabit.objects.create(**useful_habit_params)
+
+        # Нарушение валидации указанного вознаграждения: полезная привычка или вознаграждение
+        userful_habit = UsefulHabit()
+        userful_habit.user = self.user
+        userful_habit.habit = Habit.objects.get(pk=4)
+        with self.assertRaises(ValidationError):
+            userful_habit.save()
+
+        # Нарушение валидации разрешения пользователя использовать указанную привычку
+        place = Location.objects.get(id=1)
+        action = Action.objects.get(id=5)
+        hour = Periodicity.objects.get(id=1)
+        user = User.objects.get(id=1)
+        time = datetime.now().time()
+        habit_params = {'location': place, 'action': action, 'periodicity': hour, 'author': user, 'time': time, 'is_publiс': False, 'execution_time': 100}
+        habit = Habit.objects.create(**habit_params)
+
+        userful_habit = UsefulHabit()
+        userful_habit.user = User.objects.get(pk=3)
+        userful_habit.habit = habit
+        userful_habit.reward = Reward.objects.get(pk=1)
+        with self.assertRaises(ValidationError):
+            userful_habit.save()
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        
