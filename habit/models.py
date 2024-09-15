@@ -52,7 +52,8 @@ class Location(TruncateTableMixin, models.Model):
 class Action(TruncateTableMixin, models.Model):
     """Действие"""
 
-    name = models.CharField(verbose_name="Название", max_length=100, unique=True)
+    # уникальное сочетание имени и признака приятного действия
+    name = models.CharField(verbose_name="Название", max_length=100)
     is_pleasant = models.BooleanField(verbose_name="Признак приятного действия", default=False)
 
     class Meta:
