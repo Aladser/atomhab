@@ -1,3 +1,5 @@
+from enum import unique
+
 from django.db import models
 from rest_framework.exceptions import ValidationError
 
@@ -50,7 +52,7 @@ class Location(TruncateTableMixin, models.Model):
 class Action(TruncateTableMixin, models.Model):
     """Действие"""
 
-    name = models.CharField(verbose_name="Название", max_length=100)
+    name = models.CharField(verbose_name="Название", max_length=100, unique=True)
     is_pleasant = models.BooleanField(verbose_name="Признак приятного действия", default=False)
 
     class Meta:
