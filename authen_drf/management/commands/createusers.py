@@ -38,3 +38,4 @@ password = '_strongpassword_'
 class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         Seeding.seed_users(User, user_obj_list, password)
+
