@@ -18,7 +18,6 @@ coverage run --source='.' manage.py test
 coverage report или coverage html
 """
 periodicity_params = {'pk':1, 'name':'test', 'interval': 61 * 60}
-big_periodicity_params = {'name':'много', 'interval': 60*60*24*70}
 action_params = {'name': 'петь_', 'is_pleasant':True},
 
 def get_test_authuser():
@@ -49,10 +48,9 @@ class PeriodicityTestCase(APITestCase):
         self.assertEqual(response_json['name'], periodicity_params['name'])
         period = str(Periodicity.objects.get(name=periodicity_params['name']))
 
-        response = self.client.post(url, big_periodicity_params)
-        response_json = response.json()
-
         # Валидация периодичности - не больше 1 недели
+        response = self.client.post(url,  {'name': 'много', 'interval': 60 * 60 * 24 * 70})
+        response_json = response.json()
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response_json[0], 'Интервал периодичности не должен превышать одну неделю')
 
@@ -139,21 +137,12 @@ class PleasantHabitTestCase(APITestCase):
         response = self.client.get(url)
         pleasant_habit_str = str(PleasantHabit.objects.get(pk=1))
 
-        place = Location.objects.get(id=1)
-        action = Action.objects.get(name=action_param_obj_list[3]['name'])
-        hour = Periodicity.objects.get(id=1)
-        user = User.objects.get(id=1)
-        time = datetime.now().time()
-        habit_params = {'location': place, 'action': action, 'periodicity': hour, 'author': user, 'time': time, 'is_publiс': True}
-        Habit.objects.create(**habit_params)
-
         pleasant_habit_params = {'habit': get_object_or_404(Habit, pk=4), 'user': self.user}
         # Валидация приятного действия
         with self.assertRaises(ValidationError):
             PleasantHabit.objects.create(**pleasant_habit_params)
 
         # Валидация разрешения пользователя использовать указанную привычку
-        pleasant_habit_params['habit'] = get_object_or_404(Habit, pk=2)
         pleasant_habit_params = {'habit': get_object_or_404(Habit, pk=2), 'user': User.objects.get(id=3)}
         with self.assertRaises(ValidationError):
             PleasantHabit.objects.create(**pleasant_habit_params)
@@ -184,7 +173,7 @@ class UsefulHabitTestCase(APITestCase):
         with self.assertRaises(ValidationError):
             userful_habit.save()
 
-        # Нарушение валидации разрешения пользователя использовать указанную привычку
+        # Нарушение валидации разрешения пользователя использовать неполезную привычку
         place = Location.objects.get(id=1)
         action = Action.objects.get(id=5)
         hour = Periodicity.objects.get(id=1)
