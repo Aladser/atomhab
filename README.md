@@ -5,7 +5,8 @@
 + JWT - авториазция
 + Запуск отложенных задач: ``celery -A config worker -l INFO``
 + Запуск периодических задач: ``celery -A config worker --beat --scheduler django --loglevel=info``
-+ Flake8 - ``flake8 --max-line-length=120``
++ Тест: `` coverage run --source='.' manage.py test && coverage html``
++ Flake8 - ``flake8`` (результаты теста - папка htmlcov)
 
 #### Модели
 + authen_drf

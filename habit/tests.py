@@ -11,22 +11,22 @@ from authen_drf.models import User
 from habit.management.commands.seed import periodicity_param_obj_list, location_param_obj_list, action_param_obj_list, \
     reward_param_obj_list, seed_db_tables
 from habit.models import Periodicity, Location, Action, Reward, Habit, PleasantHabit, UsefulHabit
+from habit.tasks import check_habit_time
 from libs.seeding import Seeding
 
 """
 coverage run --source='.' manage.py test
 coverage report или coverage html
 """
-periodicity_params = {'pk': 1, 'name': 'test', 'interval': 61 * 60}
-action_params = {'name': 'петь_', 'is_pleasant': True},
+periodicity_params = {'name': 'test', 'interval': 61 * 60}
+action_params = {'name': 'петь_', 'is_pleasant': True}
+location_params = {'name': 'Дом 1'}
 
 
 def get_test_authuser():
     """Возвращает тестового аутентифицированного пользователя """
-
     user_params = {'email': 'admin@test.ru', 'first_name': 'Админ', 'last_name': 'Админов', 'is_superuser': True}
-    User.objects.create(**user_params)
-    return User.objects.get(email=user_params['email'])
+    return User.objects.create(**user_params)
 
 
 class PeriodicityTestCase(APITestCase):
@@ -48,7 +48,6 @@ class PeriodicityTestCase(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response_json['name'], periodicity_params['name'])
-        print(str(Periodicity.objects.get(name=periodicity_params['name'])))
 
         # Валидация периодичности - не больше 1 недели
         response = self.client.post(url, {'name': 'много', 'interval': 60 * 60 * 24 * 70})
@@ -72,7 +71,6 @@ class LocationTestCase(APITestCase):
     def test_list(self):
         url = reverse('habit:location-list')
         response = self.client.get(url)
-        print(str(Location.objects.get(id=1)))
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.json()), len(location_param_obj_list))
@@ -86,7 +84,6 @@ class ActionTestCase(APITestCase):
     def test_list(self):
         url = reverse('habit:action-list')
         response = self.client.get(url)
-        print(Action.objects.get(pk=1))
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.json()), len(action_param_obj_list))
@@ -100,7 +97,6 @@ class RewardTestCase(APITestCase):
     def test_list(self):
         url = reverse('habit:reward-list')
         response = self.client.get(url)
-        print(str(Reward.objects.get(pk=1)))
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.json()), len(reward_param_obj_list))
@@ -112,10 +108,14 @@ class HabitTestCase(APITestCase):
         self.client.force_authenticate(user=get_test_authuser())
         seed_db_tables()
 
+        self.location = Location.objects.create(**location_params)
+        self.action = Action.objects.create(**action_params)
+        self.periodicity = Periodicity.objects.create(**periodicity_params)
+        self.time = datetime.now().time()
+
     def test_list(self):
         url = reverse('habit:habit-list')
         response = self.client.get(url)
-        print(Habit.objects.get(pk=1))
 
         place = Location.objects.get(id=1)
         action = Action.objects.get(id=1)
@@ -131,6 +131,21 @@ class HabitTestCase(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
+    def test_create(self):
+        url = '/habit/'
+        habit_params = {
+            "time": "20:04:00",
+            "execution_time": 10,
+            "location": 1,
+            "action": 1,
+            "periodicity": 2,
+            'author': 1
+        }
+        response = self.client.post(url, habit_params)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        response = self.client.post(url, habit_params)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
 
 class PleasantHabitTestCase(APITestCase):
     def setUp(self):
@@ -142,7 +157,6 @@ class PleasantHabitTestCase(APITestCase):
     def test_list(self):
         url = reverse('habit:pleasant-habit-list')
         response = self.client.get(url)
-        print(str(PleasantHabit.objects.get(pk=1)))
 
         pleasant_habit_params = {'habit': get_object_or_404(Habit, pk=4), 'user': self.user}
         # Валидация приятного действия
@@ -167,7 +181,6 @@ class UsefulHabitTestCase(APITestCase):
     def test_list(self):
         url = reverse('habit:useful-habit-list')
         response = self.client.get(url)
-        print(str(UsefulHabit.objects.get(pk=1)))
 
         # Нарушение валидации полезного действия
         useful_habit_params = {'habit': get_object_or_404(Habit, pk=1), 'user': self.user}
@@ -199,3 +212,14 @@ class UsefulHabitTestCase(APITestCase):
             userful_habit.save()
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
+class DelayTaskTestCase(APITestCase):
+    def setUp(self):
+        self.client.force_authenticate(get_test_authuser())
+        Seeding.seed_users(User, user_obj_list, password)
+        seed_db_tables()
+
+    def test_work(self):
+        sendings = check_habit_time()
+
