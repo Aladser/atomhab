@@ -5,7 +5,7 @@ from authen_drf.permissions import IsOwnerPermission
 
 class SpecHabitMixin:
     """Методы для контроллеров полезных и приятных привячек"""
-    
+
     def get_permissions(self):
         if self.action in ['detail', 'update', 'partial_update', 'delete']:
             self.permission_classes = [IsOwnerPermission]

@@ -6,6 +6,6 @@ class InitCreateSerializerMixin:
     """Метод init() сериализатороа создания"""
 
     def __init__(self, instance=None, data=empty, **kwargs):
-        if type(data) != QueryDict:
+        if type(data) is not QueryDict:
             data['user'] = kwargs['context']['request'].user.pk
         super().__init__(instance, data, **kwargs)

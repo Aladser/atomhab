@@ -129,4 +129,3 @@ class UsefulHabitViewSet(ModelViewSet, SpecHabitMixin):
 
     def get_serializer_class(self):
         return UsefulCreateHabitSerializer if self.action == 'create' else UsefulHabitSerializer
-

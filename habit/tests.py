@@ -11,6 +11,7 @@ from authen_drf.models import User
 from habit.management.commands.seed import periodicity_param_obj_list, location_param_obj_list, action_param_obj_list, \
     reward_param_obj_list, seed_db_tables
 from habit.models import Periodicity, Location, Action, Reward, Habit, PleasantHabit, UsefulHabit
+from habit.tasks import check_habit_time
 from libs.seeding import Seeding
 
 """
@@ -21,14 +22,11 @@ periodicity_params = {'name': 'test', 'interval': 61 * 60}
 action_params = {'name': 'петь_', 'is_pleasant': True}
 location_params = {'name': 'Дом 1'}
 
+
 def get_test_authuser():
     """Возвращает тестового аутентифицированного пользователя """
     user_params = {'email': 'admin@test.ru', 'first_name': 'Админ', 'last_name': 'Админов', 'is_superuser': True}
-    user = User.objects.filter(email = user_params['email'])
-    if user.exists():
-        return user[0]
-    else:
-        return User.objects.create(**user_params)
+    return User.objects.create(**user_params)
 
 
 class PeriodicityTestCase(APITestCase):
@@ -141,7 +139,7 @@ class HabitTestCase(APITestCase):
             "location": 1,
             "action": 1,
             "periodicity": 2,
-            'author':1
+            'author': 1
         }
         response = self.client.post(url, habit_params)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -214,3 +212,14 @@ class UsefulHabitTestCase(APITestCase):
             userful_habit.save()
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
+class DelayTaskTestCase(APITestCase):
+    def setUp(self):
+        self.client.force_authenticate(get_test_authuser())
+        Seeding.seed_users(User, user_obj_list, password)
+        seed_db_tables()
+
+    def test_work(self):
+        sendings = check_habit_time()
+
