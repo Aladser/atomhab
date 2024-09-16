@@ -146,7 +146,6 @@ class HabitTestCase(APITestCase):
         response = self.client.post(url, habit_params)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         response = self.client.post(url, habit_params)
-        print(response.json())
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
 

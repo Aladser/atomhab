@@ -1,16 +1,16 @@
 import datetime
 
-from django.core.exceptions import ValidationError
-from rest_framework import generics, exceptions
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework import generics
+from rest_framework.permissions import AllowAny
 from rest_framework.viewsets import ModelViewSet
 
-from authen_drf.permissions import IsSuperUserPermission, IsOwnerPermission
+from authen_drf.permissions import IsSuperUserPermission
 from habit.models import Location, Action, Reward, Habit, PleasantHabit, UsefulHabit, Periodicity
 from habit.paginators import ManualPagination
 from habit.serializers import LocationSerializer, ActionSerializer, RewardSerializer, HabitSerializer, \
     PleasantHabitSerializer, UsefulHabitSerializer, PeriodicitySerializer, HabitCreateSerializer, \
     PleasantHabitCreateSerializer, UsefulCreateHabitSerializer
+from libs.spec_habit_mixin import SpecHabitMixin
 
 
 # ---Периодичность---
@@ -103,17 +103,16 @@ class HabitViewSet(ModelViewSet):
 
     def perform_create(self, serializer):
         habit = serializer.save()
-        # округляет время
         habit.time = datetime.time(habit.time.hour, habit.time.minute)
-
         habit.save()
 
     def get_queryset(self):
         queryset = super().get_queryset()
         return queryset if self.request.user.is_superuser else queryset.filter(author=self.request.user)
 
+
 # --- Приятная привычка ---
-class PleasantHabitViewSet(ModelViewSet):
+class PleasantHabitViewSet(ModelViewSet, SpecHabitMixin):
     serializer_class = PleasantHabitSerializer
     queryset = PleasantHabit.objects.all()
     pagination_class = ManualPagination
@@ -121,20 +120,9 @@ class PleasantHabitViewSet(ModelViewSet):
     def get_serializer_class(self):
         return PleasantHabitCreateSerializer if self.action == 'create' else PleasantHabitSerializer
 
-    def get_permissions(self):
-        if self.action in ['detail', 'update', 'partial_update', 'delete']:
-            self.permission_classes = [IsOwnerPermission]
-        else:
-            self.permission_classes = [IsAuthenticated]
-        return super().get_permissions()
-
-    def get_queryset(self):
-        queryset = super().get_queryset()
-        return queryset if self.request.user.is_superuser else queryset.filter(user=self.request.user)
-
 
 # --- Полезная привычка ---
-class UsefulHabitViewSet(ModelViewSet):
+class UsefulHabitViewSet(ModelViewSet, SpecHabitMixin):
     serializer_class = UsefulHabitSerializer
     queryset = UsefulHabit.objects.all()
     pagination_class = ManualPagination
@@ -142,13 +130,3 @@ class UsefulHabitViewSet(ModelViewSet):
     def get_serializer_class(self):
         return UsefulCreateHabitSerializer if self.action == 'create' else UsefulHabitSerializer
 
-    def get_permissions(self):
-        if self.action in ['detail', 'update', 'partial_update', 'delete']:
-            self.permission_classes = [IsOwnerPermission]
-        else:
-            self.permission_classes = [IsAuthenticated]
-        return super().get_permissions()
-
-    def get_queryset(self):
-        queryset = super().get_queryset()
-        return queryset if self.request.user.is_superuser else queryset.filter(user=self.request.user)
