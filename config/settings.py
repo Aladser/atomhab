@@ -118,9 +118,6 @@ DATABASES = {
 # СТАТИЧЕСКИЕ ФАЙЛЫ
 STATIC_URL = "/static/"
 STATICFILES_DIRS = [BASE_DIR / "static"]
-# МЕДИА ФАЙЛЫ
-MEDIA_URL = "/media/"
-MEDIA_ROOT = BASE_DIR / "media"
 
 # ПОЧТА
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
