@@ -221,5 +221,4 @@ class DelayTaskTestCase(APITestCase):
         seed_db_tables()
 
     def test_work(self):
-        sendings = check_habit_time()
-
+        check_habit_time()
