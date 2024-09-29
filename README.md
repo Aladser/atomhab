@@ -58,10 +58,8 @@
 * В качестве связанной привычки может быть указана только приятная привычка ``PleasantHabit``
 * ``Periodicity.clean()`` - периодичность не может быть больше 7 дней
 
-#### Пагинация для:
-+ ``HabitViewSet``
-+ ``PleasantHabitViewSet``
-+ ``UsefulHabitViewSet``
+#### Пагинация:
+``HabitViewSet``, ``PleasantHabitViewSet``, ``UsefulHabitViewSet``
 
 #### Права доступа
 + ``IsAuthorPermission`` - проверка создателя объекта
