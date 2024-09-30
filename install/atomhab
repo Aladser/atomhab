@@ -1,15 +1,17 @@
 server {
     listen 80;
     server_name atomhab.local;
-
-    location /media/ {
-	    root /var/www/atomhab;
-    }
+    access_log  /var/www/atomhab/access.log;
+    error_log  /var/www/atomhab/error_log  error;
 
     location / {
 	include proxy_params;
 	proxy_pass http://unix:/var/www/atomhab/atomhab.sock;
     }
 
+    location = /favicon.ico {access_log off; log_not_found off; }
+    location /static/ { 
+	root /var/www/atomhab/venv/lib/python3.12/site-packages/rest_framework;
+    }
 }
 
