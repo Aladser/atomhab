@@ -8,7 +8,11 @@ from dotenv import load_dotenv
 BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure--t_4)3!-#**93az!mv%le!5$nciz99ff0f^-6#h!ecu@-m**gs'
 DEBUG = True
-ALLOWED_HOSTS = []
+
+ALLOWED_HOSTS = [
+    "atomhab.local",
+    '127.0.0.1'
+]
 
 load_dotenv(BASE_DIR / '.env')
 

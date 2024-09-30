@@ -1,0 +1,14 @@
+[Unit]
+Description=atomhab daemon
+After=network.target
+
+[Service]
+User=aladser
+Group=www-data
+Restart=on-failure
+WorkingDirectory=/var/www/atomhab/
+ExecStart=/var/www/atomhab/venv/bin/gunicorn --access-logfile - --workers 3 --bind unix:/var/www/atomhab/atomhab.sock config.wsgi
+
+[Install]
+WantedBy=multi-user.target
+
