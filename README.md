@@ -20,15 +20,16 @@
 + ``python manage.py createusers`` - создать пользователей
 + ``python manage.py seed`` - сидирование таблиц
 + JWT - авторизация
-+ Запуск отложенных задач:
-``celery -A config worker -l INFO``
-+ Запуск периодических задач:
-``celery -A config worker --beat --scheduler django --loglevel=info``
-+ Тест:
-``coverage run --source='.' manage.py test && coverage html``
-+ Flake8 (результаты теста - папка htmlcov):
-
-``flake8``
++ Запуск отложенных задач: ``celery -A config worker -l INFO``
++ Запуск периодических задач: ``celery -A config worker --beat --scheduler django --loglevel=info``
++ Тест: ``coverage run --source='.' manage.py test && coverage html``
++ Flake8 (результаты теста - папка htmlcov): ``flake8``
++ Сборка docker-контейнера
+```
+  docker network create atomichabitnet
+  docker-compose up --build - пересобрать контейнеры
+  docker-compose up - запуск контейнеров
+```
 
 #### Документация
 + http://127.0.0.1:8000/redoc/

@@ -1,0 +1,67 @@
+version: '3'
+services:
+  redis:
+    image: redis:latest
+    restart: on-failure
+    expose:
+      - "6379"
+
+  db:
+    image: postgres:16-alpine
+    restart: on-failure
+    env_file:
+      - .env
+    expose:
+      - "5432"
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "-c", "pg_isready -U $POSTGRES_USER"]
+      interval: 10s
+      retries: 5
+      timeout: 3s
+
+  app:
+    build: .
+    tty: true
+    env_file:
+      - .env
+    ports:
+      - "8000:8000"
+    command: sh -c  "python manage.py migrate && python manage.py createusers && python manage.py seed && python manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - .:/app
+    depends_on:
+      db:
+        condition: service_healthy
+
+  celery:
+    build: .
+    tty: true
+    env_file:
+      - .env
+    restart: on-failure
+    command: sh -c  "celery -A config worker -l INFO"
+    volumes:
+      - .:/app
+    depends_on:
+      - redis
+      - db
+      - app
+
+  celery-beat:
+    build: .
+    tty: true
+    env_file:
+      - .env
+    restart: on-failure
+    command: sh -c  "celery -A config worker --beat --scheduler django --loglevel=info"
+    volumes:
+      - .:/app
+    depends_on:
+      - redis
+      - db
+      - app
+
+volumes:
+  pg_data:
