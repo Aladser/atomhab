@@ -5,6 +5,8 @@ services:
     restart: on-failure
     expose:
       - "6379"
+    networks:
+      - atomhabmnet
 
   db:
     image: postgres:16-alpine
@@ -20,6 +22,8 @@ services:
       interval: 10s
       retries: 5
       timeout: 3s
+    networks:
+      - atomhabmnet
 
   app:
     build: .
@@ -34,6 +38,8 @@ services:
     depends_on:
       db:
         condition: service_healthy
+    networks:
+      - atomhabmnet
 
   celery:
     build: .
@@ -48,6 +54,8 @@ services:
       - redis
       - db
       - app
+    networks:
+      - atomhabmnet
 
   celery-beat:
     build: .
@@ -62,6 +70,11 @@ services:
       - redis
       - db
       - app
+    networks:
+      - atomhabmnet
 
 volumes:
   pg_data:
+networks:
+  atomhabmnet:
+    driver: bridge
